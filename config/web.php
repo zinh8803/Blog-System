@@ -19,13 +19,24 @@ $config = [
     ],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@npm' => '@vendor/npm-asset',
+    ],
+    'modules' => [
+        'api' => [
+            'class' => app\modules\api\Module::class,
+        ],
     ],
     'components' => [
         'request' => [
-            // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => '',
+            'cookieValidationKey' => $_ENV['COOKIE_VALIDATION_KEY'] ?? '',
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ],
         ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+        ],
+
         'cache' => [
             'class' => \yii\caching\FileCache::class,
         ],
@@ -47,14 +58,16 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'POST api/auth/register' => 'api/auth/register',
+                'POST api/auth/login' => 'api/auth/login',
+                'POST api/auth/logout' => 'api/auth/logout',
+                'GET api/auth/me' => 'api/auth/me',
             ],
         ],
-        */
     ],
     'params' => $params,
 ];

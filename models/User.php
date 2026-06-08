@@ -4,40 +4,32 @@ declare(strict_types=1);
 
 namespace app\models;
 
-use yii\base\BaseObject;
+use app\behaviors\Timestamp;
+use app\models\base\BaseUser;
 use yii\web\IdentityInterface;
 
-class User extends BaseObject implements IdentityInterface
+class User extends BaseUser implements IdentityInterface
 {
-    public int|string $id = '';
-    public string $username = '';
-    public string $passwordHash = '';
-    public string $authKey = '';
-    public string $accessToken = '';
-    private static array $_users = [
-        '100' => [
-            'id' => '100',
-            'username' => 'admin',
-            // password: admin
-            'passwordHash' => '$2y$13$gYAywKSkhfZDq9FLNdm7buKnvlRxDexf5xipSMAxQPDUxpaptmZJu',
-            'authKey' => 'test100key',
-            'accessToken' => '100-token',
-        ],
-        '101' => [
-            'id' => '101',
-            'username' => 'demo',
-            // password: demo
-            'passwordHash' => '$2y$13$alRLq1PGVMlGYwS/Y3iy3ewQns1Z8ol8Iq6Zb5k7ZwEhblA1aL29y',
-            'authKey' => 'test101key',
-            'accessToken' => '101-token',
-        ],
-    ];
+    public function behaviors()
+    {
+        return [
+            Timestamp::class,
+        ];
+    }
+
+    public function fields()
+    {
+        $fields = parent::fields();
+        unset($fields['password_hash'], $fields['auth_key'], $fields['access_token']);
+        return $fields;
+    }
+
     /**
      * {@inheritdoc}
      */
     public static function findIdentity($id): static|null
     {
-        return isset(self::$_users[$id]) ? new static(self::$_users[$id]) : null;
+        return static::findOne($id);
     }
 
     /**
@@ -45,13 +37,7 @@ class User extends BaseObject implements IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null): static|null
     {
-        foreach (self::$_users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
-        }
-
-        return null;
+        return static::findOne(['access_token' => $token]);
     }
 
     /**
@@ -62,13 +48,12 @@ class User extends BaseObject implements IdentityInterface
      */
     public static function findByUsername(string $username): static|null
     {
-        foreach (self::$_users as $user) {
-            if (strcasecmp($user['username'], $username) === 0) {
-                return new static($user);
-            }
-        }
+        return static::findOne(['username' => $username]);
+    }
 
-        return null;
+    public static function findByEmail(string $email): static|null
+    {
+        return static::findOne(['email' => $email]);
     }
 
     /**
@@ -84,7 +69,7 @@ class User extends BaseObject implements IdentityInterface
      */
     public function getAuthKey(): string|null
     {
-        return $this->authKey;
+        return $this->auth_key;
     }
 
     /**
@@ -92,6 +77,64 @@ class User extends BaseObject implements IdentityInterface
      */
     public function validateAuthKey($authKey): bool
     {
-        return $this->authKey === $authKey;
+        return $this->auth_key === $authKey;
+    }
+
+    public function generateAccessToken(): void
+    {
+        $this->access_token = \Yii::$app->security->generateRandomString(64);
+    }
+
+    public function generateAuthKey(): void
+    {
+        $this->auth_key = \Yii::$app->security->generateRandomString(64);
+    }
+
+    public function setPassword($password)
+    {
+        $this->password_hash = \Yii::$app->security->generatePasswordHash($password);
+    }
+
+    public function validatePassword(string $password): bool
+    {
+        return \Yii::$app->security->validatePassword($password, $this->password_hash);
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->isNewRecord) {
+                $this->auth_key = \Yii::$app->security->generateRandomString();
+                $this->access_token = \Yii::$app->security->generateRandomString(64);
+            }
+
+            return true;
+        }
+        return false;
+    }
+
+    public function getPosts()
+    {
+        return $this->hasMany(Post::class, ['user_id' => 'id']);
+    }
+
+    public function getAiLogs()
+    {
+        return $this->hasMany(AiLog::class, ['user_id' => 'id']);
+    }
+
+    public function getComments()
+    {
+        return $this->hasManys(Comment::class, ['user_id' => 'id']);
+    }
+
+    public function getLikes()
+    {
+        return $this->hasMany(Like::class, ['user_id' => 'id']);
+    }
+
+    public function getFiles()
+    {
+        return $this->hasMany(File::class, ['created_by' => 'id']);
     }
 }
