@@ -2,10 +2,18 @@
 
 namespace app\models;
 
+use app\behaviors\Timestamp;
 use app\models\base\BaseComment;
 
 class Comment extends BaseComment
 {
+    public function behaviors()
+    {
+        return [
+            Timestamp::class,
+        ];
+    }
+
     public function getPost()
     {
         return $this->hasOne(Post::class, ['id' => 'post_id']);

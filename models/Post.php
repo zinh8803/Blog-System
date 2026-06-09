@@ -2,11 +2,26 @@
 
 namespace app\models;
 
+use app\behaviors\Timestamp;
 use app\models\base\BasePost;
+use yii\behaviors\SluggableBehavior;
 
 class Post extends BasePost
 {
-    public function find()
+    public function behaviors()
+    {
+        return [
+            Timestamp::class,
+            SluggableBehavior::className() => [
+                'class' => SluggableBehavior::className(),
+                'attribute' => 'title',
+                'slugAttribute' => 'slug',
+                'ensureUnique' => true,
+            ],
+        ];
+    }
+
+    public static function find()
     {
         return new query\PostQuery(get_called_class());
     }
