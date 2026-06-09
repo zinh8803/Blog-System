@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\behaviors\SoftDeleteBehavior;
 use app\behaviors\Timestamp;
 use app\models\base\BasePost;
 use yii\behaviors\SluggableBehavior;
@@ -12,6 +13,11 @@ class Post extends BasePost
     {
         return [
             Timestamp::class,
+            'softDelete' => [
+                'class' => SoftDeleteBehavior::class,
+                'attribute' => 'deleted_at',
+                'isDeletedAttribute' => 'is_deleted',
+            ],
             SluggableBehavior::className() => [
                 'class' => SluggableBehavior::className(),
                 'attribute' => 'title',
@@ -24,6 +30,16 @@ class Post extends BasePost
     public static function find()
     {
         return new query\PostQuery(get_called_class());
+    }
+
+    public function softDelete(): bool
+    {
+        return $this->getBehavior('softDelete')->softDelete();
+    }
+
+    public function restore(): bool
+    {
+        return $this->getBehavior('softDelete')->restore();
     }
 
     public function getPostTags()
