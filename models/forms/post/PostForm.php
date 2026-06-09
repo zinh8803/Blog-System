@@ -3,6 +3,7 @@
 namespace app\models\forms\post;
 
 use app\models\Category;
+use app\models\File;
 use app\models\Post;
 
 class PostForm extends Post
@@ -13,8 +14,8 @@ class PostForm extends Post
     public function scenarios(): array
     {
         return [
-            self::SCENARIO_CREATE => ['title', 'content', 'status', 'category_id'],
-            self::SCENARIO_UPDATE => ['title', 'content', 'status', 'category_id'],
+            self::SCENARIO_CREATE => ['title', 'content', 'status', 'category_id', 'thumbnail_file_id '],
+            self::SCENARIO_UPDATE => ['title', 'content', 'status', 'category_id', 'thumbnail_file_id '],
         ];
     }
 
@@ -22,6 +23,7 @@ class PostForm extends Post
     {
         return array_merge(parent::rules(), [
             ['category_id', 'exist', 'targetClass' => Category::class, 'targetAttribute' => ['category_id' => 'id']],
+            ['thumbnail_file_id ', 'exist', 'targetClass' => File::class, 'targetAttribute' => ['thumbnail_file_id ' => 'id']],
             [['title'], 'string', 'max' => 255],
             [['content'], 'string', 'min' => 10, 'max' => 1000]
         ]);

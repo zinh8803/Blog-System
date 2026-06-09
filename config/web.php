@@ -73,6 +73,11 @@ $config = [
                 'PUT api/category/<id:\d+>' => 'api/category/update',
                 'DELETE api/category/<id:\d+>' => 'api/category/delete',
 
+                'GET api/post' => 'api/post/index',
+                'GET api/post/<id:\d+>' => 'api/post/view',
+                'POST api/post' => 'api/post/create',
+                'PUT api/post/<id:\d+>' => 'api/post/update',
+                'DELETE api/post/<id:\d+>' => 'api/post/delete',
             ],
         ],
     ],
