@@ -22,7 +22,7 @@ class AiLogSearch extends AiLog
             'query' => $query,
         ]);
 
-        $this->load($params);
+        $this->load($params, '');
 
         if (!$this->validate()) {
             return $dataProvider;

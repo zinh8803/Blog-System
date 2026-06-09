@@ -22,7 +22,7 @@ class FileSearch extends File
             'query' => $query,
         ]);
 
-        $this->load($params);
+        $this->load($params, '');
 
         if (!$this->validate()) {
             return $dataProvider;

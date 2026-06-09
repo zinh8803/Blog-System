@@ -24,7 +24,7 @@ class PostSearch extends Post
 
     public function search($params)
     {
-        $query = Post::find()->active();
+        $query = Post::find();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
@@ -36,7 +36,7 @@ class PostSearch extends Post
                 ],
             ],
         ]);
-        $this->load($params);
+        $this->load($params, '');
         if (!$this->validate()) {
             return $dataProvider;
         }

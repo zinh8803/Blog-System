@@ -37,7 +37,7 @@ class CategorySearch extends Category
 //                ],
 //            ],
         ]);
-        $this->load($params);
+        $this->load($params, '');
         if (!$this->validate()) {
             return $dataProvider;
         }
