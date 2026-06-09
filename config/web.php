@@ -66,6 +66,13 @@ $config = [
                 'POST api/auth/login' => 'api/auth/login',
                 'POST api/auth/logout' => 'api/auth/logout',
                 'GET api/auth/me' => 'api/auth/me',
+
+                'GET api/category' => 'api/category/index',
+                'GET api/category/<id:\d+>' => 'api/category/view',
+                'POST api/category' => 'api/category/create',
+                'PUT api/category/<id:\d+>' => 'api/category/update',
+                'DELETE api/category/<id:\d+>' => 'api/category/delete',
+
             ],
         ],
     ],
