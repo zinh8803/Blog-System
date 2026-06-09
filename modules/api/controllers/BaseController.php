@@ -2,6 +2,7 @@
 
 namespace app\modules\api\controllers;
 
+use yii\data\ActiveDataProvider;
 use yii\rest\Controller;
 
 class BaseController extends Controller
@@ -17,15 +18,32 @@ class BaseController extends Controller
         ];
     }
 
-    public function formatJson($status = true, $data = [], $message = "", $code = 200): array
+    public function formatJson($status = true, $data = [], string $message = '', $code = 200): array
     {
         \Yii::$app->response->statusCode = $code;
 
         return [
-            "code" => $code,
-            "status" => $status,
-            "data" => $data,
-            "message" => $message,
+            'code' => $code,
+            'status' => $status,
+            'data' => $data,
+            'message' => $message,
         ];
     }
+
+    protected function successPaginate(ActiveDataProvider $dataProvider, $status = true, string $message = 'Data retrieved successfully', $statusCode = 200): array
+    {
+        return [
+            'code' => $statusCode,
+            'status' => $status,
+            'data' => $dataProvider->getModels(),
+            'message' => $message,
+            '_meta' => [
+                'total' => $dataProvider->getTotalCount(),
+                'page' => $dataProvider->pagination->getPage() + 1,
+                'limit' => $dataProvider->pagination->getPageSize(),
+                'total_page' => $dataProvider->pagination->getPageCount(),
+            ],
+        ];
+    }
+
 }
