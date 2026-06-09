@@ -6,6 +6,11 @@ use app\models\base\BasePost;
 
 class Post extends BasePost
 {
+    public function find()
+    {
+        return new query\PostQuery(get_called_class());
+    }
+
     public function getPostTags()
     {
         return $this->hasMany(PostTag::class, ['post_id' => 'id']);
