@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\behaviors\Timestamp;
 use app\models\base\BaseTag;
+use yii\behaviors\SluggableBehavior;
 use yii\helpers\Inflector;
 
 class Tag extends BaseTag
@@ -12,16 +13,13 @@ class Tag extends BaseTag
     {
         return [
             Timestamp::class,
+            SluggableBehavior::className() => [
+                'class' => SluggableBehavior::className(),
+                'attribute' => 'name',
+                'slugAttribute' => 'slug',
+                'ensureUnique' => true,
+            ],
         ];
-    }
-
-    public function beforeSave($insert)
-    {
-        if ($this->isAttributeChanged('name')) {
-            $this->slug = Inflector::slug($this->name);
-        }
-
-        return parent::beforeSave($insert);
     }
 
     public function getPostTags()

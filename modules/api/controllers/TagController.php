@@ -56,15 +56,12 @@ class TagController extends BaseController
 
     public function actionUpdate($id)
     {
-        $form = new TagForm(['scenario' => TagForm::SCENARIO_UPDATE, 'id' => $id,]);
-        $form->load($this->request->bodyParams, '');
-        if (!$form->validate()) {
-            return $this->formatJson(false, $form->errors, 'Validation failed', 422);
-        }
-
         $model = $this->findModel($id);
-        $model->setAttributes($form->getAttributes(['name']), false);
-
+        $model->scenario = TagForm::SCENARIO_UPDATE;
+        $model->load($this->request->bodyParams, '');
+        if (!$model->validate()) {
+            return $this->formatJson(false, $model->errors, 'Validation failed', 422);
+        }
         try {
             if ($model->save(false)) {
                 return $this->formatJson(true, $model, 'Tag updated successfully');
@@ -73,6 +70,7 @@ class TagController extends BaseController
             \Yii::error($exception->getMessage(), __METHOD__);
             throw new NotFoundHttpException($exception->getMessage());
         }
+
     }
 
     public function actionDelete($id)
@@ -86,7 +84,7 @@ class TagController extends BaseController
 
     public function findModel($id)
     {
-        $model = Tag::findOne($id);
+        $model = TagForm::findOne($id);
         if (!$model) {
             throw new NotFoundHttpException('Tag not found');
         }

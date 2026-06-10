@@ -74,24 +74,24 @@ class PostController extends BaseController
 
     public function actionUpdate($id)
     {
-        $this->findModel($id);
+        $model = $this->findModel($id);
+        $model->scenario = PostForm::SCENARIO_UPDATE;
+        $model->load($this->request->bodyParams, '');
 
-        $form = new PostForm(['scenario' => PostForm::SCENARIO_UPDATE, "id" => $id]);
-        $form->load($this->request->bodyParams, '');
-
-        if (!$form->validate()) {
-            return $this->formatJson(false, $form->errors, 'Validation failed', 422);
+        if (!$model->validate()) {
+            return $this->formatJson(false, $model->errors, 'Validation failed', 422);
         }
 
         try {
-            $model = (new PostHandler())->updateFromForm((int) $id, $form);
+            $post = (new PostHandler())->updateFromForm((int) $id, $model);
 
-            return $this->formatJson(true, $model->toArray([], ['tags']), 'Post updated successfully');
+            return $this->formatJson(true, $post->toArray([], ['tags']), 'Post updated successfully');
         } catch (\Throwable $exception) {
             \Yii::error($exception->getMessage(), __METHOD__);
 
             return $this->formatJson(false, null, $exception->getMessage(), 500);
         }
+
     }
 
     public function actionDelete($id)

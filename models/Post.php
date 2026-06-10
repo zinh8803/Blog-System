@@ -5,7 +5,7 @@ namespace app\models;
 use app\behaviors\SoftDeleteBehavior;
 use app\behaviors\Timestamp;
 use app\models\base\BasePost;
-use yii\helpers\Inflector;
+use yii\behaviors\SluggableBehavior;
 
 class Post extends BasePost
 {
@@ -20,6 +20,12 @@ class Post extends BasePost
                 'class' => SoftDeleteBehavior::class,
                 'attribute' => 'deleted_at',
                 'isDeletedAttribute' => 'is_deleted',
+            ],
+            SluggableBehavior::className() => [
+                'class' => SluggableBehavior::className(),
+                'attribute' => 'title',
+                'slugAttribute' => 'slug',
+                'ensureUnique' => true,
             ],
         ];
     }
@@ -59,9 +65,6 @@ class Post extends BasePost
         if (parent::beforeSave($insert)) {
             if ($this->isNewRecord) {
                 $this->user_id = \Yii::$app->user->id;
-            }
-            if ($this->isAttributeChanged('title')) {
-                $this->slug = Inflector::slug($this->title);
             }
             if (
                 $this->status === self::STATUS_PUBLISHED

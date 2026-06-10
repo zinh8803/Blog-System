@@ -19,13 +19,7 @@ class TagForm extends Tag
 
     public function rules(): array
     {
-        $rules = parent::rules();
-
-        $rules = array_filter($rules, function ($rule) {
-            return !isset($rule[1]) || $rule[1] !== 'unique';
-        });
-
-        return array_merge($rules, [
+        return array_merge(parent::rules(), [
             [['name'], 'unique', 'targetClass' => Tag::class, 'on' => self::SCENARIO_CREATE, 'message' => 'Name already exists.',],
 
             [['name'], 'unique', 'targetClass' => Tag::class, 'filter' => ['!=', 'id', $this->id],

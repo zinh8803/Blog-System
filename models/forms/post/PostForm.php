@@ -31,13 +31,7 @@ class PostForm extends Post
 
     public function rules(): array
     {
-        $rules = parent::rules();
-
-        $rules = array_filter($rules, function ($rule) {
-            return !isset($rule[1]) || $rule[1] !== 'unique';
-        });
-
-        return array_merge($rules, [
+        return array_merge(parent::rules(), [
             ['category_id', 'exist', 'targetClass' => Category::class, 'targetAttribute' => ['category_id' => 'id']],
             ['thumbnail_file_id', 'exist', 'targetClass' => File::class, 'targetAttribute' => ['thumbnail_file_id' => 'id']],
             [['content'], 'string', 'min' => 10, 'max' => 10000],

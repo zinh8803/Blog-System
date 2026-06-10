@@ -48,27 +48,28 @@ class CategoryController extends BaseController
 
     public function actionUpdate(int $id)
     {
-        $form = new CategoryForm([
-            'scenario' => CategoryForm::SCENARIO_UPDATE,
-        ]);
-        $form->id = $id;
-        $form->load($this->request->bodyParams, '');
-        if (!$form->validate()) {
-            return $this->formatJson(false, $form->errors, 'Validation failed', 422);
-        }
-
         $model = $this->findModel($id);
-        $model->setAttributes($form->getAttributes(['name', 'status', 'slug']), false);
+        $model->scenario = CategoryForm::SCENARIO_UPDATE;
+
+        $model->load($this->request->bodyParams, '');
+
+        if (!$model->validate()) {
+            return $this->formatJson(false, $model->errors, 'Validation failed', 422);
+        }
 
         try {
             if ($model->save(false)) {
                 return $this->formatJson(true, $model, 'Category updated successfully');
             }
+
+            return $this->formatJson(false, $model->errors, 'Update failed', 400);
         } catch (\Throwable $exception) {
             \Yii::error($exception->getMessage(), __METHOD__);
-            throw new NotFoundHttpException($exception->getMessage());
+
+            return $this->formatJson(false, null, 'Internal server error', 500);
         }
     }
+
 
     public function actionDelete(int $id)
     {

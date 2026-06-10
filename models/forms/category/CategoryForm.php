@@ -19,13 +19,7 @@ class CategoryForm extends Category
 
     public function rules(): array
     {
-        $rules = parent::rules();
-
-        $rules = array_filter($rules, function ($rule) {
-            return !isset($rule[1]) || $rule[1] !== 'unique';
-        });
-
-        return array_merge($rules, [
+        return array_merge(parent::rules(), [
             [['name'], 'unique', 'targetClass' => Category::class, 'on' => self::SCENARIO_CREATE, 'message' => 'Name already exists.',],
             [['name'], 'unique', 'targetClass' => Category::class, 'filter' => ['!=', 'id', $this->id],
                 'on' => self::SCENARIO_UPDATE, 'message' => 'Name already exists.'],
