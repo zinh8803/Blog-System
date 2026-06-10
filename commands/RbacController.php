@@ -98,7 +98,11 @@ class RbacController extends Controller
             'comment.create',
             'like.toggle',
         ] as $permissionName) {
-            $auth->addChild($author, $auth->getPermission($permissionName));
+            $permission = $auth->getPermission($permissionName);
+
+            if ($permission) {
+                $auth->addChild($author, $permission);
+            }
         }
 
         $auth->addChild($author, $reader);
