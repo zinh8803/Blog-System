@@ -78,6 +78,12 @@ $config = [
                 'POST api/post' => 'api/post/create',
                 'PUT api/post/<id:\d+>' => 'api/post/update',
                 'DELETE api/post/<id:\d+>' => 'api/post/delete',
+
+                'GET api/tag' => 'api/tag/index',
+                'GET api/tag/<id:\d+>' => 'api/tag/view',
+                'POST api/tag' => 'api/tag/create',
+                'PUT api/tag/<id:\d+>' => 'api/tag/update',
+                'DELETE api/tag/<id:\d+>' => 'api/tag/delete',
             ],
         ],
     ],

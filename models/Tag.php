@@ -4,7 +4,7 @@ namespace app\models;
 
 use app\behaviors\Timestamp;
 use app\models\base\BaseTag;
-use yii\behaviors\SluggableBehavior;
+use yii\helpers\Inflector;
 
 class Tag extends BaseTag
 {
@@ -12,13 +12,16 @@ class Tag extends BaseTag
     {
         return [
             Timestamp::class,
-            SluggableBehavior::className() => [
-                'class' => SluggableBehavior::className(),
-                'attribute' => 'name',
-                'slugAttribute' => 'slug',
-                'ensureUnique' => true,
-            ],
         ];
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($this->isAttributeChanged('name')) {
+            $this->slug = Inflector::slug($this->name);
+        }
+
+        return parent::beforeSave($insert);
     }
 
     public function getPostTags()
@@ -30,5 +33,23 @@ class Tag extends BaseTag
     {
         return $this->hasMany(Post::class, ['id' => 'post_id'])
             ->via('postTags');
+    }
+
+    public static function findOrCreateByName(string $name): self
+    {
+        $slug = Inflector::slug($name);
+
+        $tag = static::findOne(['slug' => $slug]);
+
+        if ($tag) {
+            return $tag;
+        }
+
+        $tag = new static();
+        $tag->name = $name;
+        $tag->slug = $slug;
+        $tag->save(false);
+
+        return $tag;
     }
 }
