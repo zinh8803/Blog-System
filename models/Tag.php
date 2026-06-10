@@ -13,8 +13,8 @@ class Tag extends BaseTag
     {
         return [
             Timestamp::class,
-            SluggableBehavior::className() => [
-                'class' => SluggableBehavior::className(),
+            'slug' => [
+                'class' => SluggableBehavior::class,
                 'attribute' => 'name',
                 'slugAttribute' => 'slug',
                 'ensureUnique' => true,

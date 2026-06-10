@@ -6,6 +6,7 @@ use app\behaviors\SoftDeleteBehavior;
 use app\behaviors\Timestamp;
 use app\models\base\BasePost;
 use yii\behaviors\SluggableBehavior;
+use yii\db\BaseActiveRecord;
 
 class Post extends BasePost
 {
@@ -21,11 +22,16 @@ class Post extends BasePost
                 'attribute' => 'deleted_at',
                 'isDeletedAttribute' => 'is_deleted',
             ],
-            SluggableBehavior::className() => [
-                'class' => SluggableBehavior::className(),
+            'slug' => [
+                'class' => SluggableBehavior::class,
                 'attribute' => 'title',
                 'slugAttribute' => 'slug',
                 'ensureUnique' => true,
+                'immutable' => false,
+                'attributes' => [
+                    BaseActiveRecord::EVENT_BEFORE_INSERT => 'slug',
+                    BaseActiveRecord::EVENT_BEFORE_UPDATE => 'slug',
+                ],
             ],
         ];
     }
