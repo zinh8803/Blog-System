@@ -67,7 +67,7 @@ class Post extends BasePost
                 $this->status === self::STATUS_PUBLISHED
                 && ($this->isAttributeChanged('status') || empty($this->published_at))
             ) {
-                $this->published_at = date('Y-m-d H:i:s');
+                $this->published_at = time();
             }
             return true;
         }
