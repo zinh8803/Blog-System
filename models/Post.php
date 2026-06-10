@@ -5,10 +5,13 @@ namespace app\models;
 use app\behaviors\SoftDeleteBehavior;
 use app\behaviors\Timestamp;
 use app\models\base\BasePost;
-use yii\behaviors\SluggableBehavior;
+use yii\helpers\Inflector;
 
 class Post extends BasePost
 {
+    public const STATUS_DRAFT = 'draft';
+    public const STATUS_PUBLISHED = 'published';
+
     public function behaviors()
     {
         return [
@@ -18,13 +21,57 @@ class Post extends BasePost
                 'attribute' => 'deleted_at',
                 'isDeletedAttribute' => 'is_deleted',
             ],
-            SluggableBehavior::className() => [
-                'class' => SluggableBehavior::className(),
-                'attribute' => 'title',
-                'slugAttribute' => 'slug',
-                'ensureUnique' => true,
-            ],
         ];
+    }
+
+    public function fields()
+    {
+        return [
+            'id',
+            'user_id',
+            'category_id',
+            'thumbnail_file_id',
+            'title',
+            'slug',
+            'summary',
+            'content',
+            'status',
+            'view_count',
+            'is_deleted',
+            'published_at',
+            'created_at',
+            'updated_at',
+            'deleted_at',
+        ];
+    }
+
+    public function extraFields()
+    {
+        return [
+            'tags',
+            'comments',
+            'likes',
+        ];
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->isNewRecord) {
+                $this->user_id = \Yii::$app->user->id;
+            }
+            if ($this->isAttributeChanged('title')) {
+                $this->slug = Inflector::slug($this->title);
+            }
+            if (
+                $this->status === self::STATUS_PUBLISHED
+                && ($this->isAttributeChanged('status') || empty($this->published_at))
+            ) {
+                $this->published_at = date('Y-m-d H:i:s');
+            }
+            return true;
+        }
+        return false;
     }
 
     public static function find()

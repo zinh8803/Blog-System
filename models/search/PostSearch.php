@@ -14,8 +14,8 @@ class PostSearch extends Post
     public function rules()
     {
         return [
-            [['id', 'category_id', 'user_id', 'status', 'created_at', 'updated_at', 'published_at', 'page', 'limit'], 'integer'],
-            [['user_id', 'title', 'content', 'created_at', 'updated_at', 'published_at'], 'safe'],
+            [['id', 'category_id', 'user_id', 'page', 'limit'], 'integer'],
+            [['title', 'content', 'status', 'created_at', 'updated_at', 'published_at'], 'safe'],
             [['title'], 'string', 'max' => 255],
         ];
     }
@@ -28,7 +28,19 @@ class PostSearch extends Post
     public function search($params)
     {
         $this->load($params, '');
-        $query = Post::find();
+        $query = Post::find()->notDeleted();
+        return $this->buildDataProvider($query);
+    }
+
+    public function searchTrash($params)
+    {
+        $this->load($params, '');
+        $query = Post::find()->deleted();
+        return $this->buildDataProvider($query);
+    }
+
+    private function buildDataProvider($query)
+    {
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [

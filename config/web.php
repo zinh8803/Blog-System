@@ -74,9 +74,12 @@ $config = [
                 'DELETE api/category/<id:\d+>' => 'api/category/delete',
 
                 'GET api/post' => 'api/post/index',
+                'GET api/post/trash' => 'api/post/trash-all',
                 'GET api/post/<id:\d+>' => 'api/post/view',
                 'POST api/post' => 'api/post/create',
                 'PUT api/post/<id:\d+>' => 'api/post/update',
+                'POST api/post/<id:\d+>/restore' => 'api/post/restore',
+                'DELETE api/post/<id:\d+>/force' => 'api/post/force-delete',
                 'DELETE api/post/<id:\d+>' => 'api/post/delete',
 
                 'GET api/tag' => 'api/tag/index',
