@@ -74,13 +74,13 @@ class RbacController extends Controller
         $postDeleteOwn->ruleName = $rule->name;
         $auth->update('post.deleteOwn', $postDeleteOwn);
 
-        $postDeleteOwn = $auth->getPermission('post.restoreOwn');
-        $postDeleteOwn->ruleName = $rule->name;
-        $auth->update('post.restoreOwn', $postDeleteOwn);
+        $postRestoreOwn = $auth->getPermission('post.restoreOwn');
+        $postRestoreOwn->ruleName = $rule->name;
+        $auth->update('post.restoreOwn', $postRestoreOwn);
 
         $auth->addChild($postUpdateOwn, $auth->getPermission('post.update'));
         $auth->addChild($postDeleteOwn, $auth->getPermission('post.delete'));
-        $auth->addChild($postDeleteOwn, $auth->getPermission('post.restore'));
+        $auth->addChild($postRestoreOwn, $auth->getPermission('post.restore'));
 
         $reader = $auth->createRole('reader');
         $auth->add($reader);
@@ -132,8 +132,8 @@ class RbacController extends Controller
         $this->actionCreateUser('reader', 'reader@gmail.com', 'reader');
         $this->actionCreateUser('reader1', 'reader1@gmail.com', 'reader');
         $this->actionCreateUser('reader2', 'reader2@gmail.com', 'reader');
-        $this->actionCreateUser('vinh1', 'vinh1@gmail.com', 'reader');
-        $this->actionCreateUser('vinh2', 'vinh2@gmail.com', 'reader');
+        $this->actionCreateUser('vinh1', 'vinh1@gmail.com', 'author');
+        $this->actionCreateUser('vinh2', 'vinh2@gmail.com', 'author');
         $this->actionCreateUser('author1', 'author1@gmail.com', 'author');
         $this->actionCreateUser('author2', 'author2@gmail.com', 'author');
         echo "RBAC init success\n";

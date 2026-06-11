@@ -62,31 +62,27 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                // Auth
                 'POST api/auth/register' => 'api/auth/register',
                 'POST api/auth/login' => 'api/auth/login',
                 'POST api/auth/logout' => 'api/auth/logout',
                 'GET api/auth/me' => 'api/auth/me',
 
-                'GET api/category' => 'api/category/index',
-                'GET api/category/<id:\d+>' => 'api/category/view',
-                'POST api/category' => 'api/category/create',
-                'PUT api/category/<id:\d+>' => 'api/category/update',
-                'DELETE api/category/<id:\d+>' => 'api/category/delete',
-
-                'GET api/post' => 'api/post/index',
+                // Custom actions
                 'GET api/post/trash' => 'api/post/trash-all',
-                'GET api/post/<id:\d+>' => 'api/post/view',
-                'POST api/post' => 'api/post/create',
-                'PUT api/post/<id:\d+>' => 'api/post/update',
                 'POST api/post/<id:\d+>/restore' => 'api/post/restore',
                 'DELETE api/post/<id:\d+>/force' => 'api/post/force-delete',
-                'DELETE api/post/<id:\d+>' => 'api/post/delete',
 
-                'GET api/tag' => 'api/tag/index',
-                'GET api/tag/<id:\d+>' => 'api/tag/view',
-                'POST api/tag' => 'api/tag/create',
-                'PUT api/tag/<id:\d+>' => 'api/tag/update',
-                'DELETE api/tag/<id:\d+>' => 'api/tag/delete',
+                // RESTful
+                [
+                    'class' => \yii\rest\UrlRule::class,
+                    'controller' => [
+                        'api/category',
+                        'api/post',
+                        'api/tag',
+                    ],
+                    'pluralize' => false,
+                ],
             ],
         ],
     ],
