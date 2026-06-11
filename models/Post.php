@@ -83,6 +83,13 @@ class Post extends BasePost
         return false;
     }
 
+    public function increaseViewCount(): bool
+    {
+        return (bool) $this->updateCounters([
+            'view_count' => 1,
+        ]);
+    }
+
     public static function find()
     {
         return new query\PostQuery(get_called_class());

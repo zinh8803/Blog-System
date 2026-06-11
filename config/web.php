@@ -70,6 +70,7 @@ $config = [
 
                 // Custom actions
                 'GET api/post/trash' => 'api/post/trash-all',
+                'GET api/post/slug/<slug:[\w-]+>' => 'api/post/view-by-slug',
                 'POST api/post/<id:\d+>/restore' => 'api/post/restore',
                 'DELETE api/post/<id:\d+>/force' => 'api/post/force-delete',
 

@@ -3,6 +3,7 @@
 namespace app\modules\api\controllers;
 
 use app\models\forms\post\PostForm;
+use app\models\Post;
 use app\models\PostHandler;
 use app\models\search\PostSearch;
 use yii\filters\auth\HttpBearerAuth;
@@ -16,7 +17,7 @@ class PostController extends BaseController
 
         $behaviors['authenticator'] = [
             'class' => HttpBearerAuth::class,
-            'optional' => ['index', 'view'],
+            'optional' => ['index', 'view', 'view-by-slug'],
         ];
         return $behaviors;
     }
@@ -50,6 +51,13 @@ class PostController extends BaseController
     {
         $model = $this->findModel($id);
         return $this->formatJson(true, $model, 'Post retrieved successfully');
+    }
+
+    public function actionViewBySlug($slug)
+    {
+        $post = $this->findModelSlug($slug);
+        $post->increaseViewCount();
+        return $this->formatJson(true, $post, 'Post detail');
     }
 
     public function actionCreate()
@@ -148,6 +156,20 @@ class PostController extends BaseController
     public function findModel($id)
     {
         $model = PostForm::findOne($id);
+        if (!$model) {
+            throw new NotFoundHttpException('Post not found');
+        }
+        return $model;
+    }
+
+    public function findModelSlug($slug)
+    {
+        $model = Post::find()
+            ->published()
+            ->notDeleted()
+            ->where(['slug' => $slug])
+            ->with(['tags', 'comments', 'likes'])
+            ->one();
         if (!$model) {
             throw new NotFoundHttpException('Post not found');
         }
