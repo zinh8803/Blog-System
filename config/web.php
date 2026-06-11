@@ -77,6 +77,9 @@ $config = [
                 // Comment
                 'GET api/comment/post/<postId:\d+>' => 'api/comment/by-post',
 
+                // Like
+                'POST api/like/toggle/<id:\d+>' => 'api/like/toggle',
+
                 // RESTful
                 [
                     'class' => \yii\rest\UrlRule::class,
@@ -85,6 +88,7 @@ $config = [
                         'api/post',
                         'api/tag',
                         'api/comment',
+                        'api/like',
                     ],
                     'pluralize' => false,
                 ],

@@ -14,6 +14,29 @@ class Like extends BaseLike
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'id',
+            'post_id',
+            'user_id',
+            'created_at',
+            'updated_at',
+        ];
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->isNewRecord) {
+                $this->user_id = \Yii::$app->user->id;
+            }
+
+            return true;
+        }
+        return false;
+    }
+
     public function getPost()
     {
         return $this->hasOne(Post::class, ['id' => 'post_id']);
@@ -22,5 +45,13 @@ class Like extends BaseLike
     public function getUser()
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+
+    public static function findByPostId($postId)
+    {
+        return self::find()
+            ->where(['post_id' => $postId])
+            ->andWhere(['user_id' => \Yii::$app->user->id])
+            ->one();
     }
 }
