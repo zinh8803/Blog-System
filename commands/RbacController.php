@@ -3,6 +3,7 @@
 namespace app\commands;
 
 use app\models\User;
+use app\rbac\OwnerRule;
 use app\rbac\PostOwnerRule;
 use Yii;
 use yii\console\Controller;
@@ -48,6 +49,8 @@ class RbacController extends Controller
             'comment.create',
             'comment.update',
             'comment.delete',
+            'comment.updateOwn',
+            'comment.deleteOwn',
 
             'like.toggle',
 
@@ -63,8 +66,16 @@ class RbacController extends Controller
             $auth->add($permission);
         }
 
-        $rule = new PostOwnerRule();
+        $rule = new OwnerRule();
         $auth->add($rule);
+
+        $commentUpdateOwn = $auth->createPermission('comment.updateOwn');
+        $commentUpdateOwn->ruleName = $rule->name;
+        $auth->update('comment.updateOwn', $commentUpdateOwn);
+
+        $commentDeleteOwn = $auth->createPermission('comment.deleteOwn');
+        $commentDeleteOwn->ruleName = $rule->name;
+        $auth->update('comment.deleteOwn', $commentDeleteOwn);
 
         $postUpdateOwn = $auth->getPermission('post.updateOwn');
         $postUpdateOwn->ruleName = $rule->name;
@@ -81,6 +92,8 @@ class RbacController extends Controller
         $auth->addChild($postUpdateOwn, $auth->getPermission('post.update'));
         $auth->addChild($postDeleteOwn, $auth->getPermission('post.delete'));
         $auth->addChild($postRestoreOwn, $auth->getPermission('post.restore'));
+        $auth->addChild($commentUpdateOwn, $auth->getPermission('comment.update'));
+        $auth->addChild($commentDeleteOwn, $auth->getPermission('comment.delete'));
 
         $reader = $auth->createRole('reader');
         $auth->add($reader);
@@ -93,6 +106,8 @@ class RbacController extends Controller
 
         foreach ([
                      'comment.create',
+                     'comment.updateOwn',
+                     'comment.deleteOwn',
                      'like.toggle',
                  ] as $permissionName) {
             $auth->addChild($reader, $auth->getPermission($permissionName));
@@ -107,6 +122,8 @@ class RbacController extends Controller
                      'post.deleteOwn',
                      'post.restoreOwn',
                      'comment.create',
+                     'comment.updateOwn',
+                     'comment.deleteOwn',
                      'like.toggle',
                  ] as $permissionName) {
             $permission = $auth->getPermission($permissionName);
