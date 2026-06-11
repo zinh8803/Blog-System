@@ -74,14 +74,13 @@ class CommentController extends BaseController
     {
         $comment = $this->findModel($id);
         $this->checkPermission('comment.updateOwn', ['comment' => $comment]);
-        $form = new CommentForm(['scenario' => CommentForm::SCENARIO_UPDATE, 'id' => $id]);
-        $form->load(Yii::$app->request->bodyParams, '');
-        if (!$form->validate()) {
-            return $this->formatJson(false, $form->errors, 'Validation failed', 422);
+        $comment->scenario = CommentForm::SCENARIO_UPDATE;
+        $comment->load(Yii::$app->request->bodyParams, '');
+        if (!$comment->validate()) {
+            return $this->formatJson(false, $comment->errors, 'Validation failed', 422);
         }
 
         try {
-            $comment->setAttributes($form->attributes, false);
             if ($comment->save(false)) {
                 return $this->formatJson(true, $comment, 'Comment updated successfully');
             }
@@ -90,8 +89,6 @@ class CommentController extends BaseController
             Yii::error($exception->getMessage(), __METHOD__);
             return $this->formatJson(false, null, 'Update failed: ' . $exception->getMessage(), 500);
         }
-
-
     }
 
     public function actionDelete(int $id)
