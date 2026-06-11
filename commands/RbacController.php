@@ -29,6 +29,8 @@ class RbacController extends Controller
             'post.updateOwn',
             'post.deleteOwn',
             'post.updateStatus',
+            'post.restore',
+            'post.restoreOwn',
 
             'tag.index',
             'tag.view',
@@ -72,8 +74,13 @@ class RbacController extends Controller
         $postDeleteOwn->ruleName = $rule->name;
         $auth->update('post.deleteOwn', $postDeleteOwn);
 
+        $postDeleteOwn = $auth->getPermission('post.restoreOwn');
+        $postDeleteOwn->ruleName = $rule->name;
+        $auth->update('post.restoreOwn', $postDeleteOwn);
+
         $auth->addChild($postUpdateOwn, $auth->getPermission('post.update'));
         $auth->addChild($postDeleteOwn, $auth->getPermission('post.delete'));
+        $auth->addChild($postDeleteOwn, $auth->getPermission('post.restore'));
 
         $reader = $auth->createRole('reader');
         $auth->add($reader);
@@ -85,19 +92,23 @@ class RbacController extends Controller
         $auth->add($admin);
 
         foreach ([
-            'comment.create',
-            'like.toggle',
-        ] as $permissionName) {
+                     'comment.create',
+                     'like.toggle',
+                 ] as $permissionName) {
             $auth->addChild($reader, $auth->getPermission($permissionName));
         }
 
         foreach ([
-            'post.create',
-            'post.updateOwn',
-            'post.deleteOwn',
-            'comment.create',
-            'like.toggle',
-        ] as $permissionName) {
+                     'tag.create',
+                     'tag.update',
+                     'tag.delete',
+                     'post.create',
+                     'post.updateOwn',
+                     'post.deleteOwn',
+                     'post.restoreOwn',
+                     'comment.create',
+                     'like.toggle',
+                 ] as $permissionName) {
             $permission = $auth->getPermission($permissionName);
 
             if ($permission) {
@@ -121,7 +132,8 @@ class RbacController extends Controller
         $this->actionCreateUser('reader', 'reader@gmail.com', 'reader');
         $this->actionCreateUser('reader1', 'reader1@gmail.com', 'reader');
         $this->actionCreateUser('reader2', 'reader2@gmail.com', 'reader');
-        $this->actionCreateUser('author', 'author@gmail.com', 'author');
+        $this->actionCreateUser('vinh1', 'vinh1@gmail.com', 'reader');
+        $this->actionCreateUser('vinh2', 'vinh2@gmail.com', 'reader');
         $this->actionCreateUser('author1', 'author1@gmail.com', 'author');
         $this->actionCreateUser('author2', 'author2@gmail.com', 'author');
         echo "RBAC init success\n";

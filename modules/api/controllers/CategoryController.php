@@ -5,10 +5,22 @@ namespace app\modules\api\controllers;
 use app\models\Category;
 use app\models\forms\category\CategoryForm;
 use app\models\search\CategorySearch;
+use yii\filters\auth\HttpBearerAuth;
 use yii\web\NotFoundHttpException;
 
 class CategoryController extends BaseController
 {
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+
+        $behaviors['authenticator'] = [
+            'class' => HttpBearerAuth::class,
+            'optional' => ['index', 'view'],
+        ];
+        return $behaviors;
+    }
+
     public function actionIndex()
     {
         $searchModel = new CategorySearch();
@@ -24,6 +36,7 @@ class CategoryController extends BaseController
 
     public function actionCreate()
     {
+        $this->checkPermission('category.create');
         $form = new CategoryForm([
             'scenario' => CategoryForm::SCENARIO_CREATE,
         ]);
@@ -48,6 +61,7 @@ class CategoryController extends BaseController
 
     public function actionUpdate(int $id)
     {
+        $this->checkPermission('category.update');
         $model = $this->findModel($id);
         $model->scenario = CategoryForm::SCENARIO_UPDATE;
 
@@ -73,6 +87,7 @@ class CategoryController extends BaseController
 
     public function actionDelete(int $id)
     {
+        $this->checkPermission('category.delete');
         $model = $this->findModel($id);
         if (!$model->delete()) {
             throw new NotFoundHttpException('Failed to delete category');

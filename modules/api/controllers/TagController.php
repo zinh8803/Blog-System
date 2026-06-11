@@ -6,10 +6,22 @@ namespace app\modules\api\controllers;
 use app\models\forms\tag\TagForm;
 use app\models\search\TagSearch;
 use app\models\Tag;
+use yii\filters\auth\HttpBearerAuth;
 use yii\web\NotFoundHttpException;
 
 class TagController extends BaseController
 {
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+
+        $behaviors['authenticator'] = [
+            'class' => HttpBearerAuth::class,
+            'optional' => ['index', 'view'],
+        ];
+        return $behaviors;
+    }
+
     public function actionIndex()
     {
         try {
@@ -35,6 +47,7 @@ class TagController extends BaseController
 
     public function actionCreate()
     {
+        $this->checkPermission('tag.create');
         $form = new TagForm(['scenario' => TagForm::SCENARIO_CREATE,]);
         $form->load($this->request->bodyParams, '');
         if (!$form->validate()) {
@@ -56,6 +69,7 @@ class TagController extends BaseController
 
     public function actionUpdate($id)
     {
+        $this->checkPermission('tag.update');
         $model = $this->findModel($id);
         $model->scenario = TagForm::SCENARIO_UPDATE;
         $model->load($this->request->bodyParams, '');
@@ -75,6 +89,7 @@ class TagController extends BaseController
 
     public function actionDelete($id)
     {
+        $this->checkPermission('tag.delete');
         $model = $this->findModel($id);
         if ($model->delete()) {
             return $this->formatJson(true, null, 'Tag deleted successfully');

@@ -54,6 +54,7 @@ class PostController extends BaseController
 
     public function actionCreate()
     {
+        $this->checkPermission('post.create');
         $form = new PostForm(['scenario' => PostForm::SCENARIO_CREATE]);
         $form->load($this->request->bodyParams, '');
 
@@ -75,6 +76,7 @@ class PostController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $this->checkPermission('post.updateOwn', ['post' => $model,]);
         $model->scenario = PostForm::SCENARIO_UPDATE;
         $model->load($this->request->bodyParams, '');
 
@@ -97,7 +99,7 @@ class PostController extends BaseController
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-
+        $this->checkPermission('post.deleteOwn', ['post' => $model,]);
         try {
             if (!$model->softDelete()) {
                 return $this->formatJson(false, null, 'Failed to delete post', 400);
@@ -114,7 +116,7 @@ class PostController extends BaseController
     public function actionRestore($id)
     {
         $model = $this->findModel($id);
-
+        $this->checkPermission('post.restoreOwn', ['post' => $model,]);
         try {
             if (!$model->restore()) {
                 return $this->formatJson(false, null, 'Failed to restore post', 400);
@@ -130,8 +132,8 @@ class PostController extends BaseController
 
     public function actionForceDelete($id)
     {
-        $this->findModel($id);
-
+        $model = $this->findModel($id);
+        $this->checkPermission('post.deleteOwn', ['post' => $model,]);
         try {
             (new PostHandler())->forceDeleteById((int) $id);
 

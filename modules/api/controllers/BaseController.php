@@ -4,6 +4,7 @@ namespace app\modules\api\controllers;
 
 use yii\data\ActiveDataProvider;
 use yii\rest\Controller;
+use yii\web\ForbiddenHttpException;
 
 class BaseController extends Controller
 {
@@ -44,6 +45,13 @@ class BaseController extends Controller
                 'total_page' => $dataProvider->pagination->getPageCount(),
             ],
         ];
+    }
+
+    public function checkPermission($permission, array $param = [])
+    {
+        if (!\Yii::$app->user->can($permission, $param)) {
+            throw new ForbiddenHttpException('You do not have permission to perform this action');
+        }
     }
 
 }
