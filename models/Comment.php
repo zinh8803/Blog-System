@@ -14,6 +14,33 @@ class Comment extends BaseComment
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'id',
+            'post_id',
+            'user_id',
+            'content',
+            'parent_id',
+            'status',
+            'replies',
+            'created_at',
+            'updated_at',
+        ];
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->isNewRecord) {
+                $this->user_id = \Yii::$app->user->id;
+                $this->status = 'visible';
+            }
+            return true;
+        }
+        return false;
+    }
+
     public function getPost()
     {
         return $this->hasOne(Post::class, ['id' => 'post_id']);

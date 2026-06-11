@@ -74,6 +74,9 @@ $config = [
                 'POST api/post/<id:\d+>/restore' => 'api/post/restore',
                 'DELETE api/post/<id:\d+>/force' => 'api/post/force-delete',
 
+                // Comment
+                'GET api/comment/post/<postId:\d+>' => 'api/comment/by-post',
+
                 // RESTful
                 [
                     'class' => \yii\rest\UrlRule::class,
@@ -81,6 +84,7 @@ $config = [
                         'api/category',
                         'api/post',
                         'api/tag',
+                        'api/comment',
                     ],
                     'pluralize' => false,
                 ],
