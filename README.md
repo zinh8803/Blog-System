@@ -1,234 +1,363 @@
-<p align="center">
-    <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://www.yiiframework.com/image/design/logo/yii3_full_for_dark.svg">
-        <source media="(prefers-color-scheme: light)" srcset="https://www.yiiframework.com/image/design/logo/yii3_full_for_light.svg">
-        <img src="https://www.yiiframework.com/image/design/logo/yii3_full_for_light.svg" alt="Yii Framework" height="100">
-    </picture>
-    <h1 align="center">Yii 2 Basic Project Template</h1>
-    <br>
-</p>
+# Yii2 Blog API
 
-Yii 2 Basic Project Template is a skeleton [Yii 2](https://www.yiiframework.com/) application best for
-rapidly creating small projects.
+REST API Blog System built with Yii2.
 
-The template contains the basic features including user login/logout and a contact page.
-It includes all commonly used configurations that would allow you to focus on adding new
-features to your application.
+## Requirements
 
-[![Latest Stable Version](https://img.shields.io/packagist/v/yiisoft/yii2-app-basic.svg?style=for-the-badge&label=Stable&logo=packagist)](https://packagist.org/packages/yiisoft/yii2-app-basic)
-[![Total Downloads](https://img.shields.io/packagist/dt/yiisoft/yii2-app-basic.svg?style=for-the-badge&label=Downloads)](https://packagist.org/packages/yiisoft/yii2-app-basic)
-[![build](https://img.shields.io/github/actions/workflow/status/yiisoft/yii2-app-basic/build.yml?style=for-the-badge&logo=github&label=Build)](https://github.com/yiisoft/yii2-app-basic/actions?query=workflow%3Abuild)
-[![codecov](https://img.shields.io/codecov/c/github/yiisoft/yii2-app-basic.svg?style=for-the-badge&logo=codecov&logoColor=white&label=Codecov)](https://codecov.io/gh/yiisoft/yii2-app-basic)
-[![Static Analysis](https://img.shields.io/github/actions/workflow/status/yiisoft/yii2-app-basic/static.yml?style=for-the-badge&label=Static)](https://github.com/yiisoft/yii2-app-basic/actions/workflows/static.yml)
+* PHP >= 8.2
+* Composer
+* MySQL
+* Yii2 Basic
+* Laragon/XAMPP hoặc môi trường PHP local
 
-<picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/images/home-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="docs/images/home-light.png">
-    <img src="docs/images/home-light.png" alt="Web Application Basic">
-</picture>
+## Setup Project
 
-## Docker
+### 1. Clone project
 
-[![Apache](https://img.shields.io/github/actions/workflow/status/yiisoft/yii2-app-basic/docker.yml?style=for-the-badge&logo=apache&label=Apache)](https://github.com/yiisoft/yii2-app-basic/actions/workflows/docker.yml)
-
-DIRECTORY STRUCTURE
--------------------
-
-      assets/             contains assets definition
-      commands/           contains console commands (controllers)
-      config/             contains application configurations
-      controllers/        contains Web controller classes
-      mail/               contains view files for e-mails
-      models/             contains model classes
-      runtime/            contains files generated during runtime
-      tests/              contains various tests for the basic application
-      vendor/             contains dependent 3rd-party packages
-      views/              contains view files for the Web application
-      web/                contains the entry script and Web resources
-
-REQUIREMENTS
-------------
-
-The minimum requirement by this project template that your Web server supports PHP 8.2.
-
-INSTALLATION
-------------
-
-> [!IMPORTANT]
-> - The minimum required [PHP](https://www.php.net/) version of Yii is PHP `8.2`.
-
-## Install via Composer
-
-If you do not have [Composer](https://getcomposer.org/), you may install it by following the instructions
-at [getcomposer.org](https://getcomposer.org/doc/00-intro.md#installation-nix).
-
-You can then install this project template using the following command:
-
-~~~
-composer create-project --prefer-dist yiisoft/yii2-app-basic basic
-~~~
-
-Now you should be able to access the application through the following URL, assuming `basic` is the directory
-directly under the Web root.
-
-~~~
-http://localhost/basic/web/
-~~~
-
-## Install from an Archive File
-
-Extract the archive file downloaded from [yiiframework.com](https://www.yiiframework.com/download/) to
-a directory named `basic` that is directly under the Web root.
-
-Set cookie validation key in `config/web.php` file to some random secret string:
-
-```php
-'request' => [
-    // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-    'cookieValidationKey' => '<secret random string goes here>',
-],
+```bash
+git clone https://github.com/zinh8803/Blog-System.git
+cd Blog-System
 ```
 
-You can then access the application through the following URL:
+### 2. Install dependencies
 
-~~~
-http://localhost/basic/web/
-~~~
-
-## Install with Docker
-
-Update your vendor packages
-
-    docker-compose run --rm php composer update --prefer-dist
-    
-Run the installation triggers (creating cookie validation code)
-
-    docker-compose run --rm php composer install    
-    
-Start the container
-
-    docker-compose up -d
-    
-You can then access the application through the following URL:
-
-    http://127.0.0.1:8000
-
-Run tests inside the container
-
-    docker compose exec -T php vendor/bin/codecept build
-    docker compose exec -T php vendor/bin/codecept run
-
-**NOTES:** 
-- Minimum required Docker engine version `17.04` for development (see [Performance tuning for volume mounts](https://docs.docker.com/docker-for-mac/osxfs-caching/))
-- The default configuration uses a host-volume in your home directory `~/.composer-docker/cache` for Composer caches
-
-
-CONFIGURATION
--------------
-
-## Database
-
-Edit the file `config/db.php` with real data, for example:
-
-```php
-return [
-    'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=yii2basic',
-    'username' => 'root',
-    'password' => '1234',
-    'charset' => 'utf8',
-];
+```bash
+composer install
 ```
 
-**NOTES:**
-- Yii won't create the database for you, this has to be done manually before you can access it.
-- Check and edit the other files in the `config/` directory to customize your application as required.
-- Refer to the README in the `tests` directory for information specific to basic application tests.
+### 3. Create `.env`
 
-TESTING
--------
+Copy file example:
 
-Tests are located in `tests` directory. They are developed with [Codeception PHP Testing Framework](https://codeception.com/).
-By default, there are 3 test suites:
-
-- `unit`
-- `functional`
-- `acceptance`
-
-Tests can be executed by running
-
-```
-vendor/bin/codecept run --env php-builtin
+```bash
+cp .env.example .env
 ```
 
-The command above will execute unit and functional tests. Unit tests are testing the system components, while functional
-tests are for testing user interaction.
+Generate cookie validation key:
 
-
-## Acceptance tests
-
-The `acceptance` suite is configured in `tests/Acceptance.suite.yml`.
-
-### Acceptance tests (PhpBrowser)
-
-By default, acceptance tests use the `PhpBrowser` module and run against the built-in PHP web server started via the
-`php-builtin` environment.
-
-```
-# run all tests with built-in web server
-composer tests
-
-# run acceptance tests only
-vendor/bin/codecept run Acceptance --env php-builtin
+```bash
+php -r "echo bin2hex(random_bytes(32));"
 ```
 
-### Acceptance tests (WebDriver + Selenium)
+Cấu hình database:
 
-To run acceptance tests in a real browser, switch the `acceptance` suite to use the `WebDriver` module.
-`tests/Acceptance.suite.yml` contains an example WebDriver configuration (commented).
+```env
+DB_DSN=mysql:host=localhost;dbname=yii2_blog
+DB_USERNAME=root
+DB_PASSWORD=
 
-1. Download and start [Selenium Server](https://www.selenium.dev/downloads/).
-2. Install the corresponding browser driver (for example. [GeckoDriver](https://github.com/mozilla/geckodriver/releases) or
-   [ChromeDriver](https://googlechromelabs.github.io/chrome-for-testing/)).
-3. Update `tests/Acceptance.suite.yml` to enable `WebDriver` and disable `PhpBrowser`.
-4. Run:
-
-```
-vendor/bin/codecept run Acceptance --env php-builtin
+COOKIE_VALIDATION_KEY=your-secret-key
 ```
 
-## Code coverage support
+### 4. Run migration
 
-Code coverage is configured in `codeception.yml`. You can run your tests and collect coverage with the following command:
-
-```
-#collect coverage for all tests
-vendor/bin/codecept run --coverage --coverage-html --coverage-xml --env php-builtin
-
-#collect coverage only for unit tests
-vendor/bin/codecept run Unit --coverage --coverage-html --coverage-xml --env php-builtin
-
-#collect coverage for unit and functional tests
-vendor/bin/codecept run Functional,Unit --coverage --coverage-html --coverage-xml --env php-builtin
+```bash
+php yii migrate
 ```
 
-You can see code coverage output under the `tests/Support/output` directory.
+Chạy migration RBAC Yii2:
 
-## Documentation
+```bash
+php yii migrate --migrationPath=@yii/rbac/migrations
+```
 
-- [Internals](docs/internals.md)
+### 5. Seed RBAC and users
 
-## Support the project
+Khởi tạo roles, permissions, owner rules:
 
-[![Open Collective](https://img.shields.io/badge/Open%20Collective-sponsor-7eadf1?style=for-the-badge&logo=open%20collective&logoColor=7eadf1&labelColor=555555)](https://opencollective.com/yiisoft)
+```bash
+php yii rbac/init
+```
 
-## Follow updates
+### Default Accounts
 
-[![Official website](https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=for-the-badge&logo=yii)](https://www.yiiframework.com/)
-[![Follow on X](https://img.shields.io/badge/-Follow%20on%20X-1DA1F2.svg?style=for-the-badge&logo=x&logoColor=white&labelColor=000000)](https://x.com/yiiframework)
-[![Telegram](https://img.shields.io/badge/telegram-join-1DA1F2?style=for-the-badge&logo=telegram)](https://t.me/yii_framework_in_english)
-[![Slack](https://img.shields.io/badge/slack-join-1DA1F2?style=for-the-badge&logo=slack)](https://yiiframework.com/go/slack)
+After running the seed command, the following accounts are available:
 
-## License
+| Role    | Email             | Password |
+|---------|-------------------|----------|
+| Admin   | admin@gmail.com   | 123456   |
+| Author1 | author1@gmail.com | 123456   |
+| Author2 | author2@gmail.com | 123456   |
+| Reader  | reader@gmail.com  | 123456   |
+| Reader1 | reader1@gmail.com | 123456   |
+| Reader2 | reader2@gmail.com | 123456   |
 
-[![License](https://img.shields.io/badge/License-BSD--3--Clause-brightgreen.svg?style=for-the-badge&logo=opensourceinitiative&logoColor=white&labelColor=555555)](LICENSE.md)
+You can use these accounts to test authentication and RBAC permissions.
+
+### 6. Start server
+
+```bash
+php yii serve --port=8080
+```
+
+Base URL:
+
+```txt
+http://localhost:8080/api
+```
+
+## API Response Format
+
+Success:
+
+```json
+{
+    "code": 200,
+    "status": true,
+    "data": [],
+    "message": "Success"
+}
+```
+
+Validation error:
+
+```json
+{
+    "code": 422,
+    "status": false,
+    "data": [],
+    "message": "Validation failed"
+}
+```
+
+Pagination:
+
+```json
+{
+    "code": 200,
+    "status": true,
+    "data": [],
+    "_meta": {
+        "total": 100,
+        "page": 1,
+        "limit": 10,
+        "total_page": 10
+    },
+    "message": "Data retrieved successfully"
+}
+```
+
+## Authentication
+
+Use Bearer Token:
+
+```txt
+Authorization: Bearer <access_token>
+```
+
+### Auth Routes
+
+| Method | Endpoint             | Description       |
+|--------|----------------------|-------------------|
+| POST   | `/api/auth/register` | Register new user |
+| POST   | `/api/auth/login`    | Login             |
+| POST   | `/api/auth/logout`   | Logout            |
+| GET    | `/api/auth/me`       | Current user info |
+
+## Category Routes
+
+| Method | Endpoint             | Description     |
+|--------|----------------------|-----------------|
+| GET    | `/api/category`      | List categories |
+| GET    | `/api/category/{id}` | Category detail |
+| POST   | `/api/category`      | Create category |
+| PUT    | `/api/category/{id}` | Update category |
+| DELETE | `/api/category/{id}` | Delete category |
+
+Query example:
+
+```txt
+GET /api/category?name=php&page=1&limit=10
+```
+
+## Post Routes
+
+| Method | Endpoint                 | Description                                        |
+|--------|--------------------------|----------------------------------------------------|
+| GET    | `/api/post`              | List posts                                         |
+| GET    | `/api/post/{id}`         | Post detail by ID                                  |
+| GET    | `/api/post/slug/{slug}`  | Public post detail by slug and increase view count |
+| POST   | `/api/post`              | Create post                                        |
+| PUT    | `/api/post/{id}`         | Update post                                        |
+| DELETE | `/api/post/{id}`         | Soft delete post                                   |
+| GET    | `/api/post/trash`        | List deleted posts                                 |
+| POST   | `/api/post/{id}/restore` | Restore deleted post                               |
+| DELETE | `/api/post/{id}/force`   | Force delete post                                  |
+
+Query example:
+
+```txt
+GET /api/post?title=yii2&status=published&category_id=1&tag=php&page=1&limit=10
+```
+
+Create post example:
+
+```json
+{
+    "title": "Yii2 Blog",
+    "summary": "Short summary",
+    "content": "Post content minimum 10 characters",
+    "status": "published",
+    "category_id": 1,
+    "thumbnail_file_id": null,
+    "tags": [
+        "yii2",
+        "php",
+        "backend"
+    ]
+}
+```
+
+## Tag Routes
+
+| Method | Endpoint        | Description |
+|--------|-----------------|-------------|
+| GET    | `/api/tag`      | List tags   |
+| GET    | `/api/tag/{id}` | Tag detail  |
+| POST   | `/api/tag`      | Create tag  |
+| PUT    | `/api/tag/{id}` | Update tag  |
+| DELETE | `/api/tag/{id}` | Delete tag  |
+
+## Comment Routes
+
+| Method | Endpoint                 | Description           |
+|--------|--------------------------|-----------------------|
+| GET    | `/api/comment/post/{id}` | List comments by post |
+| POST   | `/api/comment`           | Create comment/reply  |
+| PUT    | `/api/comment/{id}`      | Update comment        |
+| DELETE | `/api/comment/{id}`      | Delete comment        |
+
+Create root comment:
+
+```json
+{
+    "post_id": 1,
+    "content": "This is a comment"
+}
+```
+
+Create reply:
+
+```json
+{
+    "post_id": 1,
+    "parent_id": 1,
+    "content": "This is a reply"
+}
+```
+
+Comment only supports 2 levels:
+
+```txt
+Root comment
+└── Reply
+```
+
+Reply to reply is not allowed.
+
+## Like Routes
+
+| Method | Endpoint                | Description             |
+|--------|-------------------------|-------------------------|
+| POST   | `/api/like/toggle/{id}` | Toggle like/unlike post |
+
+Response:
+
+```json
+{
+    "code": 200,
+    "status": true,
+    "data": {
+        "liked": true
+    },
+    "message": "like successfully"
+}
+```
+
+or:
+
+```json
+{
+    "code": 200,
+    "status": true,
+    "data": {
+        "liked": false
+    },
+    "message": "Unlike successfully"
+}
+```
+
+## RBAC Roles
+
+### reader
+
+* View posts
+* View tags
+* View categories
+* Create comment
+* Toggle like
+
+### author
+
+* All reader permissions
+* Create post
+* Update own post
+* Delete own post
+* Restore own post
+
+### admin
+
+* Full permissions
+* Manage all posts
+* Manage categories
+* Manage users
+* Manage comments
+
+## Acceptance Test Flow
+
+1. Run migrations.
+2. Run RBAC init.
+3. Create admin, author, reader users.
+4. Login admin.
+5. Create category.
+6. Login author.
+7. Create post.
+8. View post by slug.
+9. Login reader.
+10. Create comment.
+11. Toggle like.
+12. Test RBAC:
+
+    * Reader cannot create post.
+    * Author cannot update/delete another author's post.
+    * Admin can manage all posts.
+
+## Postman Collection
+
+Postman collection is located in:
+
+```txt
+docs/postman/
+```
+
+Import the collection into Postman and set environment variable:
+
+```txt
+host=http://localhost:8080/api
+token=<access_token>
+```
+
+Then run requests in order:
+
+```txt
+Auth → Category → Post → Comment → Like
+```
+
+## Notes
+
+* No foreign key constraints are used in migrations.
+* Relations are handled by Yii2 ActiveRecord.
+* API response is standardized with `code`, `status`, `data`, and `message`.
+* List endpoints return pagination meta.
+* RBAC uses Yii2 native `yii\rbac\DbManager`.
+* Owner check is handled by RBAC Rule.
