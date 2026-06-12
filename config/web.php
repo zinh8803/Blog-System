@@ -36,9 +36,6 @@ $config = [
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
         ],
-        'errorHandler' => [
-            'class' => app\components\ApiErrorHandler::class,
-        ],
         'cache' => [
             'class' => \yii\caching\FileCache::class,
         ],
@@ -47,7 +44,7 @@ $config = [
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [
-            'errorAction' => 'site/error',
+            'class' => app\components\ApiErrorHandler::class,
         ],
         'mailer' => \yii\mail\MailerInterface::class,
         'log' => [

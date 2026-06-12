@@ -4,7 +4,6 @@ namespace app\commands;
 
 use app\models\User;
 use app\rbac\OwnerRule;
-use app\rbac\PostOwnerRule;
 use Yii;
 use yii\console\Controller;
 

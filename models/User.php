@@ -129,7 +129,7 @@ class User extends BaseUser implements IdentityInterface
 
     public function getComments()
     {
-        return $this->hasManys(Comment::class, ['user_id' => 'id']);
+        return $this->hasMany(Comment::class, ['user_id' => 'id']);
     }
 
     public function getLikes()
