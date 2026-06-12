@@ -9,10 +9,12 @@
     { "key": "host", "value": "http://localhost:8080/api" },
     { "key": "admin_token", "value": "" },
     { "key": "author_token", "value": "" },
+    { "key": "author2_token", "value": "" },
     { "key": "reader_token", "value": "" },
     { "key": "category_id", "value": "" },
     { "key": "tag_id", "value": "" },
     { "key": "post_id", "value": "" },
+    { "key": "author2_post_id", "value": "" },
     { "key": "post_slug", "value": "" },
     { "key": "comment_id", "value": "" },
     { "key": "reply_id", "value": "" }
@@ -74,6 +76,32 @@
           }
         },
         {
+          "name": "TRUE - Login author2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.response.to.have.status(200);",
+                  "const json = pm.response.json();",
+                  "pm.expect(json.status).to.eql(true);",
+                  "pm.collectionVariables.set('author2_token', json.data.access_token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"author2@gmail.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{host}}/auth/login"
+          }
+        },
+        {
           "name": "TRUE - Login reader",
           "event": [
             {
@@ -119,7 +147,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"username\": \"postman_user\",\n  \"email\": \"postman_user@example.com\",\n  \"password\": \"123456\"\n}"
+              "raw": "{\n  \"username\": \"postman_{{$guid}}\",\n  \"email\": \"postman_{{$guid}}@example.com\",\n  \"password\": \"123456\"\n}"
             },
             "url": "{{host}}/auth/register"
           }
@@ -241,7 +269,7 @@
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{admin_token}}" }
             ],
-            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Postman Category\",\n  \"status\": 1\n}" },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Postman Category {{$guid}}\",\n  \"status\": 1\n}" },
             "url": "{{host}}/category"
           }
         },
@@ -259,7 +287,7 @@
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{reader_token}}" }
             ],
-            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Reader Category\",\n  \"status\": 1\n}" },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Reader Category {{$guid}}\",\n  \"status\": 1\n}" },
             "url": "{{host}}/category"
           }
         },
@@ -313,7 +341,7 @@
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{author_token}}" }
             ],
-            "body": { "mode": "raw", "raw": "{\n  \"name\": \"postman-tag\"\n}" },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"postman-tag-{{$guid}}\"\n}" },
             "url": "{{host}}/tag"
           }
         },
@@ -326,7 +354,7 @@
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{reader_token}}" }
             ],
-            "body": { "mode": "raw", "raw": "{\n  \"name\": \"reader-tag\"\n}" },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"reader-tag-{{$guid}}\"\n}" },
             "url": "{{host}}/tag"
           }
         },
@@ -373,7 +401,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Postman Post\",\n  \"summary\": \"Short summary\",\n  \"content\": \"Post content minimum 10 characters\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}},\n  \"thumbnail_file_id\": null,\n  \"tags\": [\"yii2\", \"php\", \"postman\"]\n}"
+              "raw": "{\n  \"title\": \"Postman Post {{$guid}}\",\n  \"summary\": \"Short summary\",\n  \"content\": \"Post content minimum 10 characters\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}},\n  \"thumbnail_file_id\": null,\n  \"tags\": [\"yii2\", \"php\", \"postman\"]\n}"
             },
             "url": "{{host}}/post"
           }
@@ -404,7 +432,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Postman Post Updated\",\n  \"summary\": \"Updated summary\",\n  \"content\": \"Updated content minimum 10 characters\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}},\n  \"thumbnail_file_id\": null,\n  \"tags\": [\"updated\", \"postman\"]\n}"
+              "raw": "{\n  \"title\": \"Postman Post Updated {{$guid}}\",\n  \"summary\": \"Updated summary\",\n  \"content\": \"Updated content minimum 10 characters\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}},\n  \"thumbnail_file_id\": null,\n  \"tags\": [\"updated\", \"postman\"]\n}"
             },
             "url": "{{host}}/post/{{post_id}}"
           }
@@ -420,7 +448,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Reader Post\",\n  \"content\": \"Reader cannot create this post\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}}\n}"
+              "raw": "{\n  \"title\": \"Reader Post {{$guid}}\",\n  \"content\": \"Reader cannot create this post\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}}\n}"
             },
             "url": "{{host}}/post"
           }
@@ -436,9 +464,85 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Invalid Post\",\n  \"content\": \"short\",\n  \"status\": \"invalid-status\",\n  \"category_id\": 999999\n}"
+              "raw": "{\n  \"title\": \"Invalid Post {{$guid}}\",\n  \"content\": \"short\",\n  \"status\": \"invalid-status\",\n  \"category_id\": 999999\n}"
             },
             "url": "{{host}}/post"
+          }
+        },
+        {
+          "name": "TRUE - Create post as author2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.response.to.have.status(201);",
+                  "const json = pm.response.json();",
+                  "pm.expect(json.status).to.eql(true);",
+                  "pm.collectionVariables.set('author2_post_id', json.data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{author2_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Author2 Post {{$guid}}\",\n  \"summary\": \"Author2 summary\",\n  \"content\": \"Author2 post content minimum 10 characters\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}},\n  \"thumbnail_file_id\": null,\n  \"tags\": [\"author2\", \"postman\"]\n}"
+            },
+            "url": "{{host}}/post"
+          }
+        },
+        {
+          "name": "FALSE - Author cannot update another author's post",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.response.to.have.status(403);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{author_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Author1 Tries Update Author2 Post {{$guid}}\",\n  \"summary\": \"Should be forbidden\",\n  \"content\": \"This update should be rejected by owner RBAC rule\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}},\n  \"thumbnail_file_id\": null,\n  \"tags\": [\"forbidden\"]\n}"
+            },
+            "url": "{{host}}/post/{{author2_post_id}}"
+          }
+        },
+        {
+          "name": "FALSE - Author cannot delete another author's post",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.response.to.have.status(403);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{author_token}}" }
+            ],
+            "url": "{{host}}/post/{{author2_post_id}}"
           }
         },
         {
