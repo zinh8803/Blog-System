@@ -1,0 +1,608 @@
+{
+  "info": {
+    "name": "Yii2 Blog API - True/False Cases",
+    "_postman_id": "8f4b88a9-c1bd-4b25-8d7b-111111111111",
+    "description": "Postman cases generated from README, config/web.php routes, API controllers, form validation and RBAC seed. Set host to http://localhost:8080/api and run in order.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "host", "value": "http://localhost:8080/api" },
+    { "key": "admin_token", "value": "" },
+    { "key": "author_token", "value": "" },
+    { "key": "reader_token", "value": "" },
+    { "key": "category_id", "value": "" },
+    { "key": "tag_id", "value": "" },
+    { "key": "post_id", "value": "" },
+    { "key": "post_slug", "value": "" },
+    { "key": "comment_id", "value": "" },
+    { "key": "reply_id", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "01 Auth",
+      "item": [
+        {
+          "name": "TRUE - Login admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.response.to.have.status(200);",
+                  "const json = pm.response.json();",
+                  "pm.expect(json.status).to.eql(true);",
+                  "pm.collectionVariables.set('admin_token', json.data.access_token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{host}}/auth/login"
+          }
+        },
+        {
+          "name": "TRUE - Login author",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.response.to.have.status(200);",
+                  "const json = pm.response.json();",
+                  "pm.expect(json.status).to.eql(true);",
+                  "pm.collectionVariables.set('author_token', json.data.access_token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"author1@gmail.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{host}}/auth/login"
+          }
+        },
+        {
+          "name": "TRUE - Login reader",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.response.to.have.status(200);",
+                  "const json = pm.response.json();",
+                  "pm.expect(json.status).to.eql(true);",
+                  "pm.collectionVariables.set('reader_token', json.data.access_token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"reader@gmail.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{host}}/auth/login"
+          }
+        },
+        {
+          "name": "TRUE - Register unique reader",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.response.to.have.status(201);",
+                  "const json = pm.response.json();",
+                  "pm.expect(json).to.have.property('status');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"postman_user\",\n  \"email\": \"postman_user@example.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{host}}/auth/register"
+          }
+        },
+        {
+          "name": "FALSE - Login wrong password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.response.to.have.status(401);",
+                  "pm.expect(pm.response.json().status).to.eql(false);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"wrong-password\"\n}"
+            },
+            "url": "{{host}}/auth/login"
+          }
+        },
+        {
+          "name": "FALSE - Register missing username",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.response.to.have.status(422);",
+                  "pm.expect(pm.response.json().status).to.eql(false);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"bad-register@example.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{host}}/auth/register"
+          }
+        },
+        {
+          "name": "TRUE - Me with token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.response.to.have.status(200);",
+                  "pm.expect(pm.response.json().status).to.eql(true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": "{{host}}/auth/me"
+          }
+        },
+        {
+          "name": "FALSE - Me without token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.response.to.have.status(401);"]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{host}}/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Category",
+      "item": [
+        {
+          "name": "TRUE - List public categories",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
+          "request": { "method": "GET", "header": [], "url": "{{host}}/category?name=&page=1&limit=10" }
+        },
+        {
+          "name": "TRUE - Create category as admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.response.to.have.status(201);",
+                  "const json = pm.response.json();",
+                  "pm.expect(json.status).to.eql(true);",
+                  "pm.collectionVariables.set('category_id', json.data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Postman Category\",\n  \"status\": 1\n}" },
+            "url": "{{host}}/category"
+          }
+        },
+        {
+          "name": "TRUE - View category",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
+          "request": { "method": "GET", "header": [], "url": "{{host}}/category/{{category_id}}" }
+        },
+        {
+          "name": "FALSE - Create category as reader forbidden",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(403);"] } }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{reader_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Reader Category\",\n  \"status\": 1\n}" },
+            "url": "{{host}}/category"
+          }
+        },
+        {
+          "name": "FALSE - Create category missing name",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": 1\n}" },
+            "url": "{{host}}/category"
+          }
+        },
+        {
+          "name": "FALSE - View category not found",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(404);"] } }],
+          "request": { "method": "GET", "header": [], "url": "{{host}}/category/999999" }
+        }
+      ]
+    },
+    {
+      "name": "03 Tag",
+      "item": [
+        {
+          "name": "TRUE - List public tags",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
+          "request": { "method": "GET", "header": [], "url": "{{host}}/tag?name=&page=1&limit=10" }
+        },
+        {
+          "name": "TRUE - Create tag as author",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.response.to.have.status(201);",
+                  "const json = pm.response.json();",
+                  "pm.expect(json.status).to.eql(true);",
+                  "pm.collectionVariables.set('tag_id', json.data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{author_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"postman-tag\"\n}" },
+            "url": "{{host}}/tag"
+          }
+        },
+        {
+          "name": "FALSE - Create tag as reader forbidden",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(403);"] } }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{reader_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"reader-tag\"\n}" },
+            "url": "{{host}}/tag"
+          }
+        },
+        {
+          "name": "FALSE - Create tag missing name",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{author_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{host}}/tag"
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Post",
+      "item": [
+        {
+          "name": "TRUE - Create post as author",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.response.to.have.status(201);",
+                  "const json = pm.response.json();",
+                  "pm.expect(json.status).to.eql(true);",
+                  "pm.collectionVariables.set('post_id', json.data.id);",
+                  "pm.collectionVariables.set('post_slug', json.data.slug);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{author_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Postman Post\",\n  \"summary\": \"Short summary\",\n  \"content\": \"Post content minimum 10 characters\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}},\n  \"thumbnail_file_id\": null,\n  \"tags\": [\"yii2\", \"php\", \"postman\"]\n}"
+            },
+            "url": "{{host}}/post"
+          }
+        },
+        {
+          "name": "TRUE - List public posts",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);", "pm.expect(pm.response.json()).to.have.property('_meta');"] } }],
+          "request": { "method": "GET", "header": [], "url": "{{host}}/post?page=1&limit=10&status=published" }
+        },
+        {
+          "name": "TRUE - View post by id",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
+          "request": { "method": "GET", "header": [], "url": "{{host}}/post/{{post_id}}" }
+        },
+        {
+          "name": "TRUE - View post by slug",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
+          "request": { "method": "GET", "header": [], "url": "{{host}}/post/slug/{{post_slug}}" }
+        },
+        {
+          "name": "TRUE - Update own post as author",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{author_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Postman Post Updated\",\n  \"summary\": \"Updated summary\",\n  \"content\": \"Updated content minimum 10 characters\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}},\n  \"thumbnail_file_id\": null,\n  \"tags\": [\"updated\", \"postman\"]\n}"
+            },
+            "url": "{{host}}/post/{{post_id}}"
+          }
+        },
+        {
+          "name": "FALSE - Create post as reader forbidden",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(403);"] } }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{reader_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Reader Post\",\n  \"content\": \"Reader cannot create this post\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}}\n}"
+            },
+            "url": "{{host}}/post"
+          }
+        },
+        {
+          "name": "FALSE - Create post invalid payload",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{author_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Invalid Post\",\n  \"content\": \"short\",\n  \"status\": \"invalid-status\",\n  \"category_id\": 999999\n}"
+            },
+            "url": "{{host}}/post"
+          }
+        },
+        {
+          "name": "FALSE - View post not found",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(404);"] } }],
+          "request": { "method": "GET", "header": [], "url": "{{host}}/post/999999" }
+        }
+      ]
+    },
+    {
+      "name": "05 Comment",
+      "item": [
+        {
+          "name": "TRUE - Create root comment as reader",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.response.to.have.status(201);",
+                  "const json = pm.response.json();",
+                  "pm.expect(json.status).to.eql(true);",
+                  "pm.collectionVariables.set('comment_id', json.data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{reader_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"post_id\": {{post_id}},\n  \"content\": \"This is a comment\"\n}" },
+            "url": "{{host}}/comment"
+          }
+        },
+        {
+          "name": "TRUE - Create reply as reader",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.response.to.have.status(201);",
+                  "const json = pm.response.json();",
+                  "pm.expect(json.status).to.eql(true);",
+                  "pm.collectionVariables.set('reply_id', json.data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{reader_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"post_id\": {{post_id}},\n  \"parent_id\": {{comment_id}},\n  \"content\": \"This is a reply\"\n}" },
+            "url": "{{host}}/comment"
+          }
+        },
+        {
+          "name": "TRUE - List comments by post",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
+          "request": { "method": "GET", "header": [], "url": "{{host}}/comment/post/{{post_id}}" }
+        },
+        {
+          "name": "TRUE - Update own comment",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{reader_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"content\": \"Updated reader comment\"\n}" },
+            "url": "{{host}}/comment/{{comment_id}}"
+          }
+        },
+        {
+          "name": "FALSE - Create comment without token",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(401);"] } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"post_id\": {{post_id}},\n  \"content\": \"Unauthorized comment\"\n}" },
+            "url": "{{host}}/comment"
+          }
+        },
+        {
+          "name": "FALSE - Reply to reply not allowed",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{reader_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"post_id\": {{post_id}},\n  \"parent_id\": {{reply_id}},\n  \"content\": \"Reply to reply\"\n}" },
+            "url": "{{host}}/comment"
+          }
+        },
+        {
+          "name": "FALSE - Create comment invalid post",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{reader_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"post_id\": 999999,\n  \"content\": \"Invalid post comment\"\n}" },
+            "url": "{{host}}/comment"
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Like",
+      "item": [
+        {
+          "name": "TRUE - Like post",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.expect(json.data.liked).to.eql(true);"] } }],
+          "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{reader_token}}" }], "url": "{{host}}/like/toggle/{{post_id}}" }
+        },
+        {
+          "name": "TRUE - Unlike post",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.expect(json.data.liked).to.eql(false);"] } }],
+          "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{reader_token}}" }], "url": "{{host}}/like/toggle/{{post_id}}" }
+        },
+        {
+          "name": "FALSE - Toggle like without token",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(401);"] } }],
+          "request": { "method": "POST", "header": [], "url": "{{host}}/like/toggle/{{post_id}}" }
+        }
+      ]
+    },
+    {
+      "name": "07 Trash And Delete",
+      "item": [
+        {
+          "name": "TRUE - Soft delete own post",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
+          "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{author_token}}" }], "url": "{{host}}/post/{{post_id}}" }
+        },
+        {
+          "name": "TRUE - List trash authenticated",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);", "pm.expect(pm.response.json()).to.have.property('_meta');"] } }],
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{author_token}}" }], "url": "{{host}}/post/trash?page=1&limit=10" }
+        },
+        {
+          "name": "TRUE - Restore own post",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
+          "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{author_token}}" }], "url": "{{host}}/post/{{post_id}}/restore" }
+        },
+        {
+          "name": "FALSE - Delete post without token",
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(401);"] } }],
+          "request": { "method": "DELETE", "header": [], "url": "{{host}}/post/{{post_id}}" }
+        }
+      ]
+    }
+  ]
+}
