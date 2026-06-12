@@ -62,35 +62,58 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+
                 // Auth
                 'POST api/auth/register' => 'api/auth/register',
                 'POST api/auth/login' => 'api/auth/login',
                 'POST api/auth/logout' => 'api/auth/logout',
                 'GET api/auth/me' => 'api/auth/me',
 
-                // Custom actions
-                'GET api/post/trash' => 'api/post/trash-all',
-                'GET api/post/slug/<slug:[\w-]+>' => 'api/post/view-by-slug',
-                'POST api/post/<id:\d+>/restore' => 'api/post/restore',
-                'DELETE api/post/<id:\d+>/force' => 'api/post/force-delete',
+                // Category
+                [
+                    'class' => yii\rest\UrlRule::class,
+                    'controller' => ['api/category'],
+                    'pluralize' => false,
+                ],
+
+                // Post
+                [
+                    'class' => yii\rest\UrlRule::class,
+                    'controller' => ['api/post'],
+                    'pluralize' => false,
+                    'extraPatterns' => [
+                        'GET trash' => 'trash-all',
+                        'GET slug/<slug:[\w-]+>' => 'view-by-slug',
+                        'POST <id:\d+>/restore' => 'restore',
+                        'DELETE <id:\d+>/force' => 'force-delete',
+                    ],
+                ],
+
+                // Tag
+                [
+                    'class' => yii\rest\UrlRule::class,
+                    'controller' => ['api/tag'],
+                    'pluralize' => false,
+                ],
 
                 // Comment
-                'GET api/comment/post/<postId:\d+>' => 'api/comment/by-post',
+                [
+                    'class' => yii\rest\UrlRule::class,
+                    'controller' => ['api/comment'],
+                    'pluralize' => false,
+                    'extraPatterns' => [
+                        'GET post/<postId:\d+>' => 'by-post',
+                    ],
+                ],
 
                 // Like
-                'POST api/like/toggle/<id:\d+>' => 'api/like/toggle',
-
-                // RESTful
                 [
-                    'class' => \yii\rest\UrlRule::class,
-                    'controller' => [
-                        'api/category',
-                        'api/post',
-                        'api/tag',
-                        'api/comment',
-                        'api/like',
-                    ],
+                    'class' => yii\rest\UrlRule::class,
+                    'controller' => ['api/like'],
                     'pluralize' => false,
+                    'extraPatterns' => [
+                        'POST toggle/<id:\d+>' => 'toggle',
+                    ],
                 ],
             ],
         ],
