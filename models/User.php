@@ -23,6 +23,8 @@ class User extends BaseUser implements IdentityInterface
         $fields = parent::fields();
         unset($fields['password_hash'], $fields['auth_key'], $fields['access_token']);
         $fields['role'] = fn() => $this->getRole()[0] ?? null;
+        $fields['created_at'] = fn() => date('Y-m-d H:i:s', $this->created_at ?? null);
+        $fields['updated_at'] = fn() => date('Y-m-d H:i:s', $this->updated_at ?? null);
         return $fields;
     }
 

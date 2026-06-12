@@ -22,6 +22,22 @@ class Tag extends BaseTag
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'id',
+            'name',
+            'slug',
+            'created_at' => function () {
+                return date('Y-m-d H:i:s', $this->created_at);
+            },
+
+            'updated_at' => function () {
+                return date('Y-m-d H:i:s', $this->updated_at);
+            },
+        ];
+    }
+
     public function getPostTags()
     {
         return $this->hasMany(PostTag::class, ['tag_id' => 'id']);

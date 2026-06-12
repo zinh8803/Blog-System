@@ -50,10 +50,18 @@ class Post extends BasePost
             'status',
             'view_count',
             'is_deleted',
-            'published_at',
-            'created_at',
-            'updated_at',
-            'deleted_at',
+            'published_at' => function () {
+                return $this->published_at ? date('Y-m-d H:i:s', $this->published_at) : null;
+            },
+            'created_at' => function () {
+                return date('Y-m-d H:i:s', $this->created_at);
+            },
+            'updated_at' => function () {
+                return date('Y-m-d H:i:s', $this->updated_at);
+            },
+            'deleted_at' => function () {
+                return $this->deleted_at ? date('Y-m-d H:i:s', $this->deleted_at) : null;
+            }
         ];
     }
 

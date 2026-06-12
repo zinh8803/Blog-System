@@ -24,8 +24,12 @@ class Comment extends BaseComment
             'parent_id',
             'status',
             'replies',
-            'created_at',
-            'updated_at',
+            'created_at' => function () {
+                return date('Y-m-d H:i:s', $this->created_at);
+            },
+            'updated_at' => function () {
+                return date('Y-m-d H:i:s', $this->updated_at);
+            }
         ];
     }
 

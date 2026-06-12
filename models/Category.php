@@ -21,6 +21,22 @@ class Category extends BaseCategory
         ];
     }
 
+    public function fields()
+    {
+        return [
+            'id',
+            'name',
+            'slug',
+            'status',
+            'created_at' => function () {
+                return date('Y-m-d H:i:s', $this->created_at);
+            },
+            'updated_at' => function () {
+                return date('Y-m-d H:i:s', $this->updated_at);
+            }
+        ];
+    }
+
     public static function find()
     {
         return new query\CategoryQuery(get_called_class());
