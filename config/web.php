@@ -36,7 +36,9 @@ $config = [
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
         ],
-
+        'errorHandler' => [
+            'class' => app\components\ApiErrorHandler::class,
+        ],
         'cache' => [
             'class' => \yii\caching\FileCache::class,
         ],

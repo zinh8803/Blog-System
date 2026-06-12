@@ -2,6 +2,8 @@
 
 namespace app\modules\api;
 
+use Yii;
+
 /**
  * api module definition class
  */
@@ -19,6 +21,9 @@ class Module extends \yii\base\Module
     {
         parent::init();
 
-        // custom initialization code goes here
+        Yii::$app->set('errorHandler', [
+            'class' => \app\components\ApiErrorHandler::class,
+        ]);
+        Yii::$app->errorHandler->register();
     }
 }
