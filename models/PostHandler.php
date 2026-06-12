@@ -110,28 +110,24 @@ class PostHandler extends Post
     {
         $tagIds = [];
 
-        foreach ($this->tags as $tagName) {
-            $tagName = trim((string) $tagName);
-
-            if ($tagName === '') {
-                continue;
-            }
-
-            $tag = Tag::findOrCreateByName($tagName);
+        foreach (Tag::findOrCreateByNames($this->tags) as $tag) {
             $tagIds[$tag->id] = $tag->id;
         }
 
         PostTag::deleteAll(['post_id' => $this->id]);
 
-        foreach ($tagIds as $tagId) {
-            $postTag = new PostTag();
-            $postTag->post_id = $this->id;
-            $postTag->tag_id = $tagId;
-
-            if (!$postTag->save(false)) {
-                throw new RuntimeException('Failed to attach post tag.');
-            }
+        if ($tagIds === []) {
+            return;
         }
+
+        $rows = array_map(
+            fn($tagId) => [$this->id, $tagId],
+            array_values($tagIds)
+        );
+
+        Yii::$app->db->createCommand()
+            ->batchInsert(PostTag::tableName(), ['post_id', 'tag_id'], $rows)
+            ->execute();
     }
 
     private function findPost(int $id): self

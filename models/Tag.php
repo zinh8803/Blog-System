@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\behaviors\Timestamp;
 use app\models\base\BaseTag;
+use RuntimeException;
 use yii\behaviors\SluggableBehavior;
 use yii\helpers\Inflector;
 
@@ -51,19 +52,56 @@ class Tag extends BaseTag
 
     public static function findOrCreateByName(string $name): self
     {
-        $slug = Inflector::slug($name);
+        $tags = static::findOrCreateByNames([$name]);
 
-        $tag = static::findOne(['slug' => $slug]);
-
-        if ($tag) {
-            return $tag;
+        if ($tags === []) {
+            throw new RuntimeException('Tag name cannot be empty.');
         }
 
-        $tag = new static();
-        $tag->name = $name;
-        $tag->slug = $slug;
-        $tag->save(false);
+        return $tags[0];
+    }
 
-        return $tag;
+    public static function findOrCreateByNames(array $names): array
+    {
+        $tagNamesBySlug = [];
+
+        foreach ($names as $name) {
+            $name = trim((string) $name);
+
+            if ($name === '') {
+                continue;
+            }
+
+            $tagNamesBySlug[Inflector::slug($name)] = $name;
+        }
+
+        if ($tagNamesBySlug === []) {
+            return [];
+        }
+
+        $tagsBySlug = static::find()
+            ->where(['slug' => array_keys($tagNamesBySlug)])
+            ->indexBy('slug')
+            ->all();
+
+        $tags = [];
+
+        foreach ($tagNamesBySlug as $slug => $name) {
+            $tag = $tagsBySlug[$slug] ?? null;
+
+            if (!$tag) {
+                $tag = new static();
+                $tag->name = $name;
+                $tag->slug = $slug;
+
+                if (!$tag->save(false)) {
+                    throw new RuntimeException('Failed to create tag.');
+                }
+            }
+
+            $tags[] = $tag;
+        }
+
+        return $tags;
     }
 }

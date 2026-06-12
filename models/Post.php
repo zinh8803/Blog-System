@@ -12,6 +12,16 @@ class Post extends BasePost
 {
     public const STATUS_DRAFT = 'draft';
     public const STATUS_PUBLISHED = 'published';
+    public const EAGER_LOAD_RELATIONS = [
+        'user',
+        'category',
+        'thumbnailFile',
+        'tags',
+        'comments.user',
+        'comments.replies.user',
+        'likes.user',
+    ];
+    public $like_count;
 
     public function behaviors()
     {
@@ -49,6 +59,7 @@ class Post extends BasePost
             'content',
             'status',
             'view_count',
+            'like_count' => fn() => (int) $this->like_count,
             'is_deleted',
             'published_at' => function () {
                 return $this->published_at ? date('Y-m-d H:i:s', $this->published_at) : null;
@@ -68,6 +79,9 @@ class Post extends BasePost
     public function extraFields()
     {
         return [
+            'user',
+            'category',
+            'thumbnailFile',
             'tags',
             'comments',
             'likes',

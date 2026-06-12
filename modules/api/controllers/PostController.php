@@ -49,7 +49,7 @@ class PostController extends BaseController
 
     public function actionView($id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($id, true);
         return $this->formatJson(true, $model, 'Post retrieved successfully');
     }
 
@@ -153,9 +153,16 @@ class PostController extends BaseController
         }
     }
 
-    public function findModel($id)
+    public function findModel($id, bool $withRelations = false)
     {
-        $model = PostForm::findOne($id);
+        $query = PostForm::find()
+            ->where(['id' => $id]);
+
+        if ($withRelations) {
+            $query->with(Post::EAGER_LOAD_RELATIONS);
+        }
+
+        $model = $query->one();
         if (!$model) {
             throw new NotFoundHttpException('Post not found');
         }
@@ -168,7 +175,7 @@ class PostController extends BaseController
             ->published()
             ->notDeleted()
             ->where(['slug' => $slug])
-            ->with(['tags', 'comments', 'likes'])
+            ->with(Post::EAGER_LOAD_RELATIONS)
             ->one();
         if (!$model) {
             throw new NotFoundHttpException('Post not found');

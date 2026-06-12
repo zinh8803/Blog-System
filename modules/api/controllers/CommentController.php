@@ -30,8 +30,6 @@ class CommentController extends BaseController
                     'parent_id' => null,
                 ])
                 ->with([
-                    'user',
-                    'replies',
                     'replies.user',
                 ])
                 ->all();

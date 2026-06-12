@@ -23,7 +23,7 @@ class Comment extends BaseComment
             'content',
             'parent_id',
             'status',
-            'replies',
+            'replies' => fn() => $this->parent_id === null ? $this->replies : [],
             'created_at' => function () {
                 return date('Y-m-d H:i:s', $this->created_at);
             },
