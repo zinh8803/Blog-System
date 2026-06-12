@@ -87,15 +87,11 @@ class AuthController extends BaseController
 
     public function actionMe()
     {
-        $user = Yii::$app->user->identity;
+        $user = User::findIdentity(Yii::$app->user->id);
 
         return $this->formatJson(
             true,
-            [
-                'id' => $user->id,
-                'username' => $user->username,
-                'email' => $user->email,
-            ],
+            $user,
             'User profile'
         );
     }

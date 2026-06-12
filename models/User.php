@@ -6,6 +6,7 @@ namespace app\models;
 
 use app\behaviors\Timestamp;
 use app\models\base\BaseUser;
+use Yii;
 use yii\web\IdentityInterface;
 
 class User extends BaseUser implements IdentityInterface
@@ -21,6 +22,7 @@ class User extends BaseUser implements IdentityInterface
     {
         $fields = parent::fields();
         unset($fields['password_hash'], $fields['auth_key'], $fields['access_token']);
+        $fields['role'] = fn() => $this->getRole()[0] ?? null;
         return $fields;
     }
 
@@ -136,5 +138,12 @@ class User extends BaseUser implements IdentityInterface
     public function getFiles()
     {
         return $this->hasMany(File::class, ['created_by' => 'id']);
+    }
+
+    public function getRole()
+    {
+        return array_keys(
+            Yii::$app->authManager->getRolesByUser($this->id)
+        );
     }
 }
