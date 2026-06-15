@@ -52,11 +52,13 @@ class R2Component extends Component
 
     public function update(string $oldKey, UploadedFile $newFile, string $type = 'content'): array
     {
+        $uploadedFile = $this->upload($newFile, $type);
+
         if ($oldKey && $this->exists($oldKey)) {
             $this->delete($oldKey);
         }
 
-        return $this->upload($newFile, $type);
+        return $uploadedFile;
     }
 
     public function delete(string $key): bool
