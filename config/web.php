@@ -33,6 +33,14 @@ $config = [
                 'application/json' => 'yii\web\JsonParser',
             ],
         ],
+        'r2' => [
+            'class' => \app\components\R2Component::class,
+            'account' => $_ENV['R2_ACCOUNT_ID'] ?? '',
+            'key' => $_ENV['R2_ACCESS_KEY_ID'] ?? '',
+            'secret' => $_ENV['R2_SECRET_ACCESS_KEY'] ?? '',
+            'bucket' => $_ENV['R2_BUCKET'] ?? '',
+            'public_url' => $_ENV['R2_PUBLIC_URL'] ?? '',
+        ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
         ],
@@ -112,6 +120,13 @@ $config = [
                     'pluralize' => false,
                     'extraPatterns' => [
                         'POST toggle/<id:\d+>' => 'toggle',
+                    ],
+                ],
+                [
+                    'class' => yii\rest\UrlRule::class,
+                    'controller' => ['api/file'],
+                    'pluralize' => false,
+                    'extraPatterns' => [
                     ],
                 ],
             ],
