@@ -17,9 +17,6 @@ class Post extends BasePost
         'category',
         'thumbnailFile',
         'tags',
-        'comments.user',
-        'comments.replies.user',
-        'likes.user',
     ];
     public $like_count;
 
@@ -83,10 +80,7 @@ class Post extends BasePost
         return [
             'user',
             'category',
-            'thumbnailFile',
             'tags',
-            'comments',
-            'likes',
         ];
     }
 
