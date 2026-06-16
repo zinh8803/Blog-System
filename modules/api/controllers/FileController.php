@@ -25,12 +25,11 @@ class FileController extends BaseController
         if (!$file) {
             return $this->formatJson(false, null, 'No file uploaded', 400);
         }
-
+        $folder = \Yii::$app->request->post('folder', 'content');
         try {
-            $url = \Yii::$app->r2->upload($file, 'thumbnail');
+            $url = \Yii::$app->r2->upload($file, $folder);
 
             $model = new File();
-            $model->created_by = \Yii::$app->user->id;
             $model->original_name = $file->name;
             $model->path = $url['key'];
             $model->url = $url['url'];
@@ -58,9 +57,9 @@ class FileController extends BaseController
         if (!$model) {
             return $this->formatJson(false, null, 'File not found', 404);
         }
-
+        $folder = \Yii::$app->request->post('folder', 'content');
         try {
-            $url = \Yii::$app->r2->update($model->path, $file, 'thumbnail');
+            $url = \Yii::$app->r2->update($model->path, $file, $folder);
 
             $model->original_name = $file->name;
             $model->path = $url['key'];

@@ -15,6 +15,17 @@ class File extends BaseFile
         ];
     }
 
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->isNewRecord) {
+                $this->created_by = \Yii::$app->user->id;
+            }
+            return true;
+        }
+        return false;
+    }
+
     public static function find()
     {
         return new FileQuery(get_called_class());
