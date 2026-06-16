@@ -54,7 +54,7 @@ class PostForm extends Post
             [['title'], 'unique', 'targetClass' => Post::class, 'filter' => ['!=', 'id', $this->id],
                 'on' => self::SCENARIO_UPDATE, 'message' => 'title already exists.'],
             ['tags', 'each', 'rule' => ['string', 'max' => 50]],
-            [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => ['png', 'jpg', 'jpeg', 'webp'], 'checkExtensionByMimeType' => false, 'maxSize' => 5 * 1024 * 1024,],
+            [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => ['png', 'jpeg', 'webp'], 'checkExtensionByMimeType' => false, 'maxSize' => 5 * 1024 * 1024,],
         ]);
     }
 }

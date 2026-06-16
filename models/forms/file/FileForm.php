@@ -18,7 +18,7 @@ class FileForm extends Model
             [['folder', 'imageFile'], 'required'],
             [['folder'], 'string'],
             [['folder'], 'in', 'range' => ['content', 'thumbnail']],
-            [['imageFile'], 'file', 'skipOnEmpty' => false, 'extensions' => ['png', 'jpg', 'jpeg', 'webp'], 'checkExtensionByMimeType' => false, 'maxSize' => 5 * 1024 * 1024,],
+            [['imageFile'], 'file', 'skipOnEmpty' => false, 'extensions' => ['png', 'jpeg', 'webp'], 'checkExtensionByMimeType' => false, 'maxSize' => 5 * 1024 * 1024,],
         ];
     }
 }
