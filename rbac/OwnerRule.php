@@ -18,6 +18,9 @@ class OwnerRule extends Rule
             return (int) $params['comment']->user_id === (int) $user;
         }
 
+        if (isset($params['file'])) {
+            return (int) $params['file']->created_by === (int) $user;
+        }
         return false;
     }
 }

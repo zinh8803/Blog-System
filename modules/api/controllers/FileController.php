@@ -37,6 +37,7 @@ class FileController extends BaseController
 
     public function actionCreate()
     {
+        $this->checkPermission('file.create');
         $form = new FileForm();
 
         $form->load($this->request->bodyParams, '');
@@ -59,7 +60,7 @@ class FileController extends BaseController
                 return $this->formatJson(false, null, 'Failed to save file record: ' . implode(', ', $model->getFirstErrors()), 500);
             }
 
-            return $this->formatJson(true, ['url' => $url], 'File uploaded successfully');
+            return $this->formatJson(true, $model, 'File uploaded successfully');
         } catch (\Exception $e) {
             return $this->formatJson(false, null, 'File upload failed: ' . $e->getMessage(), 500);
         }
@@ -68,6 +69,7 @@ class FileController extends BaseController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $this->checkPermission('file.updateOwn', ['file' => $model]);
         $form = new FileForm();
         $form->id = $id;
         $form->load($this->request->bodyParams, '');
@@ -89,7 +91,7 @@ class FileController extends BaseController
                 return $this->formatJson(false, null, 'Failed to update file record: ' . implode(', ', $model->getFirstErrors()), 500);
             }
 
-            return $this->formatJson(true, ['url' => $url], 'File updated successfully');
+            return $this->formatJson(true, $model, 'File updated successfully');
         } catch (\Exception $e) {
             return $this->formatJson(false, null, 'File update failed: ' . $e->getMessage(), 500);
         }

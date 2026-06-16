@@ -57,6 +57,7 @@ class RbacController extends Controller
             'file.view',
             'file.create',
             'file.update',
+            'file.updateOwn',
         ];
 
         foreach ($permissions as $permissionName) {
@@ -88,11 +89,16 @@ class RbacController extends Controller
         $postRestoreOwn->ruleName = $rule->name;
         $auth->update('post.restoreOwn', $postRestoreOwn);
 
+        $fileUpdateOwn = $auth->getPermission('file.updateOwn');
+        $fileUpdateOwn->ruleName = $rule->name;
+        $auth->update('file.updateOwn', $fileUpdateOwn);
+
         $auth->addChild($postUpdateOwn, $auth->getPermission('post.update'));
         $auth->addChild($postDeleteOwn, $auth->getPermission('post.delete'));
         $auth->addChild($postRestoreOwn, $auth->getPermission('post.restore'));
         $auth->addChild($commentUpdateOwn, $auth->getPermission('comment.update'));
         $auth->addChild($commentDeleteOwn, $auth->getPermission('comment.delete'));
+        $auth->addChild($fileUpdateOwn, $auth->getPermission('file.update'));
 
         $reader = $auth->createRole('reader');
         $auth->add($reader);
@@ -124,6 +130,8 @@ class RbacController extends Controller
                      'comment.updateOwn',
                      'comment.deleteOwn',
                      'like.toggle',
+                     'file.create',
+                     'file.updateOwn',
                  ] as $permissionName) {
             $permission = $auth->getPermission($permissionName);
 
