@@ -2,26 +2,23 @@
 
 namespace app\models\forms\file;
 
-use app\models\File;
+use yii\base\Model;
+use yii\web\UploadedFile;
 
-class FileForm extends File
+class FileForm extends Model
 {
-    const SCENARIO_CREATE = 'create';
-    const SCENARIO_UPDATE = 'update';
-
-    public function scenarios()
-    {
-        return [
-            self::SCENARIO_CREATE => ['name', 'path'],
-            self::SCENARIO_UPDATE => ['name', 'path'],
-        ];
-    }
+    public $id;
+    /** @var UploadedFile|null */
+    public $imageFile;
+    public $folder;
 
     public function rules(): array
     {
-        return array_merge(parent::rules(), [
-            [['name', 'path'], 'required'],
-            ['size', 'integer'],
-        ]);
+        return [
+            [['folder', 'imageFile'], 'required'],
+            [['folder'], 'string'],
+            [['folder'], 'in', 'range' => ['content', 'thumbnail']],
+            [['imageFile'], 'file', 'skipOnEmpty' => false, 'extensions' => ['png', 'jpg', 'jpeg', 'webp'], 'checkExtensionByMimeType' => false, 'maxSize' => 5 * 1024 * 1024,],
+        ];
     }
 }

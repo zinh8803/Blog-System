@@ -3,7 +3,11 @@
 namespace app\modules\api\controllers;
 
 use app\models\File;
+use app\models\forms\file\FileForm;
+use app\models\search\FileSearch;
 use yii\filters\auth\HttpBearerAuth;
+use yii\web\NotFoundHttpException;
+use yii\web\UploadedFile;
 
 class FileController extends BaseController
 {
@@ -18,24 +22,40 @@ class FileController extends BaseController
         return $behaviors;
     }
 
+    public function actionIndex()
+    {
+        $searchModel = new FileSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+        return $this->successPaginate($dataProvider, true, 'File list');
+    }
+
+    public function actionView($id)
+    {
+        $model = $this->findModel($id);
+        return $this->formatJson(true, $model, 'File retrieved successfully');
+    }
+
     public function actionCreate()
     {
-        $file = \yii\web\UploadedFile::getInstanceByName('imageFile');
+        $form = new FileForm();
 
-        if (!$file) {
-            return $this->formatJson(false, null, 'No file uploaded', 400);
+        $form->load($this->request->bodyParams, '');
+
+        $form->imageFile = UploadedFile::getInstanceByName('imageFile');
+
+        if (!$form->validate()) {
+            return $this->formatJson(false, $form->errors, 'Validation failed', 422);
         }
-        $folder = \Yii::$app->request->post('folder', 'content');
         try {
-            $url = \Yii::$app->r2->upload($file, $folder);
+            $url = \Yii::$app->r2->upload($form->imageFile, $form->folder);
 
             $model = new File();
-            $model->original_name = $file->name;
+            $model->original_name = $form->imageFile->name;
             $model->path = $url['key'];
             $model->url = $url['url'];
-            $model->mime_type = $file->type;
-            $model->size = $file->size;
-            if (!$model->save()) {
+            $model->mime_type = $form->imageFile->type;
+            $model->size = $form->imageFile->size;
+            if (!$model->save(false)) {
                 return $this->formatJson(false, null, 'Failed to save file record: ' . implode(', ', $model->getFirstErrors()), 500);
             }
 
@@ -47,26 +67,25 @@ class FileController extends BaseController
 
     public function actionUpdate($id)
     {
-        $file = \yii\web\UploadedFile::getInstanceByName('imageFile');
-
-        if (!$file) {
-            return $this->formatJson(false, null, 'No file uploaded', 400);
+        $model = $this->findModel($id);
+        $form = new FileForm();
+        $form->id = $id;
+        $form->load($this->request->bodyParams, '');
+        $form->imageFile = UploadedFile::getInstanceByName('imageFile');
+        if (!$form->validate()) {
+            return $this->formatJson(false, $form->errors, 'Validation failed', 422);
         }
 
-        $model = File::findOne($id);
-        if (!$model) {
-            return $this->formatJson(false, null, 'File not found', 404);
-        }
-        $folder = \Yii::$app->request->post('folder', 'content');
+
         try {
-            $url = \Yii::$app->r2->update($model->path, $file, $folder);
+            $url = \Yii::$app->r2->update($model->path, $form->imageFile, $form->folder);
 
-            $model->original_name = $file->name;
+            $model->original_name = $form->imageFile->name;
             $model->path = $url['key'];
             $model->url = $url['url'];
-            $model->mime_type = $file->type;
-            $model->size = $file->size;
-            if (!$model->save()) {
+            $model->mime_type = $form->imageFile->type;
+            $model->size = $form->imageFile->size;
+            if (!$model->save(false)) {
                 return $this->formatJson(false, null, 'Failed to update file record: ' . implode(', ', $model->getFirstErrors()), 500);
             }
 
@@ -74,5 +93,14 @@ class FileController extends BaseController
         } catch (\Exception $e) {
             return $this->formatJson(false, null, 'File update failed: ' . $e->getMessage(), 500);
         }
+    }
+
+    public function findModel($id)
+    {
+        $model = File::find()->where(['id' => $id])->one();
+        if (!$model) {
+            throw new NotFoundHttpException('File not found');
+        }
+        return $model;
     }
 }
