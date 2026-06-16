@@ -81,7 +81,7 @@ class PostHandler extends Post
             $post->syncTagsAfterSave = $form->hasTagsInput;
 
             if ($form->imageFile instanceof UploadedFile) {
-                $newFile = $this->createPostFile($post->id, $form->imageFile);
+                $newFile = $this->createPostFile($post->id, $form->imageFile, $oldFilePath, true);
                 $newFilePath = $newFile->path;
                 $post->thumbnail_file_id = $newFile->id;
             }
@@ -126,6 +126,8 @@ class PostHandler extends Post
         $transaction = Yii::$app->db->beginTransaction();
 
         try {
+            Yii::$app->r2->delete($post->thumbnailFile?->path);
+
             PostTag::deleteAll(['post_id' => $post->id]);
             PostFile::deleteAll(['post_id' => $post->id]);
             Comment::deleteAll(['post_id' => $post->id]);
@@ -175,7 +177,7 @@ class PostHandler extends Post
             ->execute();
     }
 
-    private function createPostFile(int $postId, UploadedFile $file): File
+    private function createPostFile(int $postId, UploadedFile $file, string $oldKey = null, bool $is_update = false): File
     {
         $uploadedFilePath = null;
 
@@ -200,6 +202,11 @@ class PostHandler extends Post
             $postFile->type = 'thumbnail';
             if (!$postFile->save(false)) {
                 throw new RuntimeException('Failed to associate file with post.');
+            }
+            if ($oldKey && $is_update) {
+                if (!empty($oldKey) && Yii::$app->r2->exists($oldKey)) {
+                    Yii::$app->r2->delete($oldKey);
+                }
             }
             return $model;
         } catch (\Exception $e) {

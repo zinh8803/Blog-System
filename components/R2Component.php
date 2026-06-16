@@ -52,13 +52,17 @@ class R2Component extends Component
 
     public function update(string $oldKey, UploadedFile $newFile, string $type = 'content'): array
     {
-        $uploadedFile = $this->upload($newFile, $type);
+        try {
+            $uploadedFile = $this->upload($newFile, $type);
 
-        if ($oldKey && $this->exists($oldKey)) {
-            $this->delete($oldKey);
+            if (!empty($oldKey) && $this->exists($oldKey)) {
+                $this->delete($oldKey);
+            }
+
+            return $uploadedFile;
+        } catch (\Throwable $e) {
+            throw new \RuntimeException('Failed to update file: ' . $e->getMessage());
         }
-
-        return $uploadedFile;
     }
 
     public function delete(string $key): bool

@@ -52,7 +52,9 @@ class Post extends BasePost
             'id',
             'user_id',
             'category_id',
-            'thumbnail_file_id',
+            'thumbnail_file' => function () {
+                return $this->thumbnailFile ? $this->thumbnailFile->url : null;
+            },
             'title',
             'slug',
             'summary',
