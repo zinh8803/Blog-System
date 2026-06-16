@@ -41,6 +41,12 @@ $config = [
             'bucket' => $_ENV['R2_BUCKET'] ?? '',
             'public_url' => $_ENV['R2_PUBLIC_URL'] ?? '',
         ],
+        'Ai' => [
+            'class' => \app\components\AiWorkerComponent::class,
+            'accountId' => $_ENV['CF_ACCOUNT_ID'],
+            'apiToken' => $_ENV['CF_API_TOKEN'],
+            'model' => $_ENV['CF_AI_MODEL'],
+        ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
         ],
