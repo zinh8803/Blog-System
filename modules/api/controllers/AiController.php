@@ -2,10 +2,9 @@
 
 namespace app\modules\api\controllers;
 
+use app\models\forms\ai\AiForm;
 use Yii;
 use yii\filters\auth\HttpBearerAuth;
-use yii\web\BadRequestHttpException;
-use yii\web\HttpException;
 
 class AiController extends BaseController
 {
@@ -23,19 +22,22 @@ class AiController extends BaseController
     public function actionGenerateTitle()
     {
         $this->checkPermission('ai.use');
+        $form = new AiForm([
+            'scenario' => AiForm::SCENARIO_GENERATE_TITLE,
+        ]);
+        $form->load($this->request->bodyParams, '');
 
-        $description = Yii::$app->request->post('description');
-
-        if (!$description) {
-            throw new BadRequestHttpException('Description is required.');
+        if (!$form->validate()) {
+            return $this->formatJson(false, $form->errors, 'Validation failed', 422);
         }
 
         try {
-            return $this->formatJson(true, ['titles' => Yii::$app->Ai->generateTitle($description),], 'Success');
+            $model = Yii::$app->Ai->generateTitle($form->description);
+            return $this->formatJson(true, ['titles' => $model], 'Success');
 
         } catch (\Throwable $e) {
 
-            throw new HttpException(502, 'AI service timeout or unavailable.',);
+            return $this->formatJson(false, null, 'AI service timeout or unavailable.', 502);
         }
     }
 
@@ -43,17 +45,21 @@ class AiController extends BaseController
     {
         $this->checkPermission('ai.use');
 
-        $content = Yii::$app->request->post('content');
+        $form = new AiForm([
+            'scenario' => AiForm::SCENARIO_GENERATE_SUMMARY,
+        ]);
+        $form->load($this->request->bodyParams, '');
 
-        if (!$content) {
-            throw new BadRequestHttpException('Content is required.');
+        if (!$form->validate()) {
+            return $this->formatJson(false, $form->errors, 'Validation failed', 422);
         }
 
         try {
-            return $this->formatJson(true, ['summary' => Yii::$app->Ai->generateSummary($content),], 'Success');
+            $model = Yii::$app->Ai->generateSummary($form->content);
+            return $this->formatJson(true, ['summary' => $model], 'Success');
 
         } catch (\Throwable $e) {
-            throw new HttpException(502, 'AI service timeout or unavailable.',);
+            return $this->formatJson(false, null, 'AI service timeout or unavailable.', 502);
         }
     }
 
@@ -61,21 +67,22 @@ class AiController extends BaseController
     {
         $this->checkPermission('ai.use');
 
-        $text = Yii::$app->request->post('text');
-        $instruction = Yii::$app->request->post('instruction');
+        $form = new AiForm([
+            'scenario' => AiForm::SCENARIO_REWRITE,
+        ]);
+        $form->load($this->request->bodyParams, '');
 
-        if (!$text || !$instruction) {
-            throw new BadRequestHttpException(
-                'Text and instruction are required.'
-            );
+        if (!$form->validate()) {
+            return $this->formatJson(false, $form->errors, 'Validation failed', 422);
         }
 
         try {
-            return $this->formatJson(true, ['text' => Yii::$app->Ai->rewrite($text, $instruction),], 'Success');
+            $model = Yii::$app->Ai->rewrite($form->text, $form->instruction);
+            return $this->formatJson(true, ['text' => $model], 'Success');
 
         } catch (\Throwable $e) {
 
-            throw new HttpException(502, 'AI service timeout or unavailable.',);
+            return $this->formatJson(false, null, 'AI service timeout or unavailable.', 502);
         }
     }
 }
