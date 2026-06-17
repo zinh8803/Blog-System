@@ -4,6 +4,7 @@ namespace app\modules\api\controllers;
 
 use app\models\Comment;
 use app\models\forms\comment\CommentForm;
+use app\models\search\CommentSearch;
 use Yii;
 use yii\filters\auth\HttpBearerAuth;
 use yii\web\NotFoundHttpException;
@@ -23,20 +24,13 @@ class CommentController extends BaseController
 
     public function actionByPost(int $postId)
     {
+        $searchModel = new CommentSearch();
         try {
-            $comments = Comment::find()
-                ->where([
-                    'post_id' => $postId,
-                    'parent_id' => null,
-                ])
-                ->with([
-                    'replies.user',
-                ])
-                ->all();
+            $comments = $searchModel->search(Yii::$app->request->queryParams, $postId);
+            return $this->successPaginate(
 
-            return $this->formatJson(
-                true,
                 $comments,
+                true,
                 'Comments retrieved successfully'
             );
         } catch (\Throwable $exception) {

@@ -66,6 +66,6 @@ class Comment extends BaseComment
     {
         return $this->hasMany(Comment::class, [
             'parent_id' => 'id'
-        ]);
+        ])->orderBy(['created_at' => SORT_DESC]);
     }
 }
