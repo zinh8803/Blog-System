@@ -23,6 +23,7 @@ class AiLogController extends BaseController
 
     public function actionIndex()
     {
+        $this->checkPermission('aiLog.index');
         $searchModel = new AiLogSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
         return $this->successPaginate($dataProvider, true, 'AiLog list');
@@ -36,6 +37,7 @@ class AiLogController extends BaseController
 
     private function findModel($id)
     {
+        $this->checkPermission('aiLog.view');
         $model = AiLog::findOne($id);
         if (!isset($model)) {
             throw new NotFoundHttpException('AiLog not found.');

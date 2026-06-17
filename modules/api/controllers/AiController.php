@@ -22,6 +22,8 @@ class AiController extends BaseController
 
     public function actionGenerateTitle()
     {
+        $this->checkPermission('ai.use');
+
         $description = Yii::$app->request->post('description');
 
         if (!$description) {
@@ -39,6 +41,8 @@ class AiController extends BaseController
 
     public function actionGenerateSummary()
     {
+        $this->checkPermission('ai.use');
+
         $content = Yii::$app->request->post('content');
 
         if (!$content) {
@@ -55,6 +59,8 @@ class AiController extends BaseController
 
     public function actionRewrite()
     {
+        $this->checkPermission('ai.use');
+
         $text = Yii::$app->request->post('text');
         $instruction = Yii::$app->request->post('instruction');
 
