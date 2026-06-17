@@ -7,22 +7,31 @@ use yii\data\ActiveDataProvider;
 
 class AiLogSearch extends AiLog
 {
+    public $page = 1;
+    public $limit = 10;
+
     public function rules()
     {
         return [
-            [['id', 'user_id', 'prompt_size', 'response_size', 'duration_ms', 'status', 'created_at', 'updated_at'], 'integer'],
+            [['id', 'user_id', 'page', 'limit', 'prompt_size', 'response_size', 'duration_ms', 'status', 'created_at', 'updated_at'], 'integer'],
             [['action'], 'safe'],
         ];
     }
 
     public function search($params)
     {
+        $this->load($params, '');
+        
         $query = AiLog::find();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'page' => max((int) $this->page - 1, 0),
+                'pageSize' => (int) $this->limit ?: 10,
+            ],
+
         ]);
 
-        $this->load($params, '');
 
         if (!$this->validate()) {
             return $dataProvider;

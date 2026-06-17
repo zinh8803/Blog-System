@@ -135,6 +135,26 @@ $config = [
                     'extraPatterns' => [
                     ],
                 ],
+
+                [
+                    'class' => yii\rest\UrlRule::class,
+                    'controller' => ['api/ai'],
+                    'pluralize' => false,
+                    'extraPatterns' => [
+                        'POST ai/generate-title' => 'generate-title',
+                        'POST ai/generate-summary' => 'generate-summary',
+                        'POST ai/generate-description' => 'generate-description',
+                    ],
+                ],
+
+                [
+                    'class' => yii\rest\UrlRule::class,
+                    'controller' => ['api/ai-log'],
+                    'pluralize' => false,
+                    'extraPatterns' => [
+
+                    ],
+                ],
             ],
         ],
     ],
