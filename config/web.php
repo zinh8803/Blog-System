@@ -126,6 +126,8 @@ $config = [
                     'pluralize' => false,
                     'extraPatterns' => [
                         'POST toggle/<id:\d+>' => 'toggle',
+                        'POST <id:\d+>' => 'like',
+                        'DELETE <id:\d+>' => 'unlike',
                     ],
                 ],
                 [

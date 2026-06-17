@@ -18,24 +18,31 @@ class LikeController extends BaseController
         return $behaviors;
     }
 
-    public function actionToggle($id)
+
+    public function actionLike($id)
     {
-        try {
-            $this->checkPermission('like.toggle');
-            $like = Like::findByPostId($id);
-            if ($like) {
-                $like->delete();
-                return $this->formatJson(true, ['liked' => false,], 'Unlike successfully');
-            }
+        $this->checkPermission('like.toggle');
+        $like = Like::findByPostId($id);
+
+        if (!$like) {
             $like = new Like();
             $like->post_id = $id;
             $like->save(false);
-
-            return $this->formatJson(true, ['liked' => true,], 'like successfully');
-        } catch (\Throwable $exception) {
-            \Yii::error($exception->getMessage(), __METHOD__);
-            return $this->formatJson(false, null, 'Failed to toggle like: ' . $exception->getMessage(), 500);
         }
+
+        return $this->formatJson(true, ['liked' => true], 'Liked');
+    }
+
+    public function actionUnlike($id)
+    {
+        $this->checkPermission('like.toggle');
+        $like = Like::findByPostId($id);
+
+        if ($like) {
+            $like->delete();
+        }
+
+        return $this->formatJson(true, ['liked' => false], 'Unliked');
     }
 
 }
