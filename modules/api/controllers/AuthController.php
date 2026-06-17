@@ -2,6 +2,7 @@
 
 namespace app\modules\api\controllers;
 
+use app\behaviors\LoginRateLimitBehavior;
 use app\models\forms\auth\AuthForm;
 use app\models\User;
 use Yii;
@@ -17,6 +18,10 @@ class AuthController extends BaseController
         $behaviors['authenticator'] = [
             'class' => HttpBearerAuth::class,
             'optional' => ['register', 'login'],
+        ];
+        $behaviors['loginRateLimit'] = [
+            'class' => LoginRateLimitBehavior::class,
+            'only' => ['login'],
         ];
         $behaviors['verbs'] = [
             'class' => VerbFilter::class,
@@ -54,7 +59,7 @@ class AuthController extends BaseController
                 if ($role) {
                     $auth->assign($role, $user->id);
                 }
-                return $this->formatJson(true, [], 'Register success', 201);
+                return $this->formatJson(true, null, 'Register success', 201);
             }
         } catch (\Exception $e) {
             return $this->formatJson(false, null, $e->getMessage(), 500);
@@ -73,11 +78,22 @@ class AuthController extends BaseController
             return $this->formatJson(false, $form->errors, 'Validation failed', 422);
         }
 
-        $user = User::findByEmail($form->email);
+        $email = strtolower(trim($form->email));
+
+        $key = sprintf('login_fail:%s:%s', Yii::$app->request->userIP, md5($email));
+
+        $user = User::findByEmail($email);
 
         if (!$user || !$user->validatePassword($form->password)) {
+
+            $attempts = Yii::$app->cache->get($key) ?: 0;
+
+            Yii::$app->cache->set($key, $attempts + 1, 300);
+
             return $this->formatJson(false, null, 'Invalid credentials', 401);
         }
+
+        Yii::$app->cache->delete($key);
 
         return $this->formatJson(true, [
             'user_id' => $user->id,
