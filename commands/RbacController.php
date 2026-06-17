@@ -58,6 +58,11 @@ class RbacController extends Controller
             'file.create',
             'file.update',
             'file.updateOwn',
+
+            'aiLog.index',
+            'aiLog.view',
+
+            'ai.use',
         ];
 
         foreach ($permissions as $permissionName) {
@@ -132,6 +137,7 @@ class RbacController extends Controller
                      'like.toggle',
                      'file.create',
                      'file.updateOwn',
+                     'ai.use',
                  ] as $permissionName) {
             $permission = $auth->getPermission($permissionName);
 
