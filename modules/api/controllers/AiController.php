@@ -37,7 +37,7 @@ class AiController extends BaseController
 
         } catch (\Throwable $e) {
 
-            return $this->formatJson(false, null, 'AI service timeout or unavailable.', 502);
+            return $this->formatJson(false, $e->getMessage(), 'AI service timeout or unavailable.', 502);
         }
     }
 
@@ -59,7 +59,7 @@ class AiController extends BaseController
             return $this->formatJson(true, ['summary' => $model], 'Success');
 
         } catch (\Throwable $e) {
-            return $this->formatJson(false, null, 'AI service timeout or unavailable.', 502);
+            return $this->formatJson(false, $e->getMessage(), 'AI service timeout or unavailable.', 502);
         }
     }
 
@@ -82,7 +82,7 @@ class AiController extends BaseController
 
         } catch (\Throwable $e) {
 
-            return $this->formatJson(false, null, 'AI service timeout or unavailable.', 502);
+            return $this->formatJson(false, $e->getMessage(), 'AI service timeout or unavailable.', 502);
         }
     }
 }
