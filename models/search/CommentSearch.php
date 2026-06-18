@@ -8,13 +8,11 @@ use yii\data\ActiveDataProvider;
 
 class CommentSearch extends Comment
 {
-    public $page = 1;
-    public $limit = 10;
 
     public function rules()
     {
         return [
-            [['id', 'page', 'limit', 'post_id', 'user_id', 'status', 'created_at', 'updated_at'], 'integer'],
+            [['id', 'post_id', 'user_id', 'status', 'created_at', 'updated_at'], 'integer'],
             [['content'], 'safe'],
         ];
     }
@@ -37,10 +35,6 @@ class CommentSearch extends Comment
             ])->orderBy(['created_at' => SORT_DESC]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => [
-                'page' => max((int) $this->page - 1, 0),
-                'pageSize' => (int) $this->limit ?: 10,
-            ],
         ]);
         if (!$this->validate()) {
             return $dataProvider;

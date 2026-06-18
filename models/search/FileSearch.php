@@ -7,13 +7,10 @@ use yii\data\ActiveDataProvider;
 
 class FileSearch extends File
 {
-    public $page = 1;
-    public $limit = 10;
-
     public function rules()
     {
         return [
-            [['id', 'size', 'mime_type', 'page', 'limit', 'created_by', 'created_at', 'updated_at'], 'integer'],
+            [['id', 'size', 'mime_type', 'created_by', 'created_at', 'updated_at'], 'integer'],
             [['original_name', 'storage', 'path', 'mime_type'], 'safe'],
         ];
     }
@@ -24,10 +21,6 @@ class FileSearch extends File
         $query = File::find();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => [
-                'page' => max((int) $this->page - 1, 0),
-                'pageSize' => (int) $this->limit ?: 10,
-            ],
         ]);
 
 

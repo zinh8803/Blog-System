@@ -8,13 +8,10 @@ use yii\data\ActiveDataProvider;
 
 class PostSearch extends Post
 {
-    public $page = 1;
-    public $limit = 10;
-
     public function rules()
     {
         return [
-            [['id', 'category_id', 'user_id', 'page', 'limit'], 'integer'],
+            [['id', 'category_id', 'user_id'], 'integer'],
             [['title', 'content', 'status', 'created_at', 'updated_at', 'published_at'], 'safe'],
             [['title'], 'string', 'max' => 255],
         ];
@@ -67,10 +64,6 @@ class PostSearch extends Post
     {
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => [
-                'page' => max((int) $this->page - 1, 0),
-                'pageSize' => (int) $this->limit ?: 10,
-            ],
         ]);
         if (!$this->validate()) {
             return $dataProvider;
