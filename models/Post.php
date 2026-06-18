@@ -19,6 +19,7 @@ class Post extends BasePost
         'tags',
     ];
     public $like_count;
+    public $tag_id;
 
     public function behaviors()
     {

@@ -11,7 +11,7 @@ class PostSearch extends Post
     public function rules()
     {
         return [
-            [['id', 'category_id', 'user_id'], 'integer'],
+            [['id', 'category_id', 'user_id', 'tag_id'], 'integer'],
             [['title', 'content', 'status', 'created_at', 'updated_at', 'published_at'], 'safe'],
             [['title'], 'string', 'max' => 255],
         ];
@@ -37,7 +37,9 @@ class PostSearch extends Post
             ->with('thumbnailFile')
             ->groupBy('p.id')
             ->orderBy(['p.id' => SORT_DESC]);
-
+        if (isset($params['tag_id'])) {
+            $query->joinWith('tags t');
+        }
         return $this->buildDataProvider($query);
     }
 
@@ -54,9 +56,12 @@ class PostSearch extends Post
             ->leftJoin(['l' => 'likes'], 'l.post_id = p.id')
             ->deleted()
             ->with('thumbnailFile')
+            ->joinWith('tags t')
             ->groupBy('p.id')
             ->orderBy(['p.id' => SORT_DESC]);
-
+        if (isset($params['tag_id'])) {
+            $query->joinWith('tags t');
+        }
         return $this->buildDataProvider($query);
     }
 
@@ -76,6 +81,7 @@ class PostSearch extends Post
             'p.created_at' => $this->created_at,
             'p.updated_at' => $this->updated_at,
             'p.published_at' => $this->published_at,
+            't.id' => $this->tag_id,
         ]);
         $query->andFilterWhere(['like', 'p.title', $this->title])
             ->andFilterWhere(['like', 'p.content', $this->content]);
