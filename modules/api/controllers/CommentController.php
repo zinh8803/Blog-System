@@ -27,12 +27,7 @@ class CommentController extends BaseController
         $searchModel = new CommentSearch();
         try {
             $comments = $searchModel->search(Yii::$app->request->queryParams, $postId);
-            return $this->successPaginate(
-
-                $comments,
-                true,
-                'Comments retrieved successfully'
-            );
+            return $this->successPaginate($comments, true, 'Comments retrieved successfully');
         } catch (\Throwable $exception) {
             Yii::error($exception->getMessage(), __METHOD__);
             return $this->formatJson(false, null, 'Failed to retrieve comments: ' . $exception->getMessage(), 500);

@@ -174,7 +174,7 @@ class PostController extends BaseController
         $model = Post::find()
             ->published()
             ->notDeleted()
-            ->where(['slug' => $slug])
+            ->andWhere(['slug' => $slug])
             ->with(Post::EAGER_LOAD_RELATIONS)
             ->one();
         if (!$model) {

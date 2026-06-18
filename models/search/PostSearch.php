@@ -34,7 +34,7 @@ class PostSearch extends Post
             ])
             ->leftJoin(['l' => 'likes'], 'l.post_id = p.id')
             ->notDeleted()
-            ->with(Post::EAGER_LOAD_RELATIONS)
+            ->with('thumbnailFile')
             ->groupBy('p.id')
             ->orderBy(['p.id' => SORT_DESC]);
 
@@ -53,7 +53,7 @@ class PostSearch extends Post
             ])
             ->leftJoin(['l' => 'likes'], 'l.post_id = p.id')
             ->deleted()
-            ->with(Post::EAGER_LOAD_RELATIONS)
+            ->with('thumbnailFile')
             ->groupBy('p.id')
             ->orderBy(['p.id' => SORT_DESC]);
 
