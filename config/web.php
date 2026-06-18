@@ -103,7 +103,7 @@ $config = [
 
 
                 // Comment
-                'GET api/comment/<postId:\d+>' => 'api/comment/by-post',
+                'GET api/comment/post/<postId:\d+>' => 'api/comment/by-post',
 
                 // Like
                 'POST api/like/<id:\d+>' => 'api/like/like',
