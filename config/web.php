@@ -82,81 +82,37 @@ $config = [
                 'POST api/auth/logout' => 'api/auth/logout',
                 'GET api/auth/me' => 'api/auth/me',
 
-                // Category
                 [
                     'class' => yii\rest\UrlRule::class,
-                    'controller' => ['api/category'],
-                    'pluralize' => false,
-                ],
-
-                // Post
-                [
-                    'class' => yii\rest\UrlRule::class,
-                    'controller' => ['api/post'],
-                    'pluralize' => false,
-                    'extraPatterns' => [
-                        'GET trash' => 'trash-all',
-                        'GET slug/<slug:[\w-]+>' => 'view-by-slug',
-                        'POST <id:\d+>/restore' => 'restore',
-                        'DELETE <id:\d+>/force' => 'force-delete',
+                    'controller' => [
+                        'api/category',
+                        'api/post',
+                        'api/comment',
+                        'api/tag',
+                        'api/file',
+                        'api/ai-log'
                     ],
-                ],
-
-                // Tag
-                [
-                    'class' => yii\rest\UrlRule::class,
-                    'controller' => ['api/tag'],
                     'pluralize' => false,
                 ],
+
+                //post
+                'GET api/post/trash' => 'api/post/trash-all',
+                'GET  api/post/slug/<slug:[\w-]+>' => 'api/post/view-by-slug',
+                'POST api/post/<id:\d+>/restore' => 'api/post/restore',
+                'DELETE api/post/<id:\d+>/force' => 'api/post/force-delete',
+
 
                 // Comment
-                [
-                    'class' => yii\rest\UrlRule::class,
-                    'controller' => ['api/comment'],
-                    'pluralize' => false,
-                    'extraPatterns' => [
-                        'GET post/<postId:\d+>' => 'by-post',
-                    ],
-                ],
+                'GET api/comment/<postId:\d+>' => 'api/comment/by-post',
 
                 // Like
-                [
-                    'class' => yii\rest\UrlRule::class,
-                    'controller' => ['api/like'],
-                    'pluralize' => false,
-                    'extraPatterns' => [
-                        'POST toggle/<id:\d+>' => 'toggle',
-                        'POST <id:\d+>' => 'like',
-                        'DELETE <id:\d+>' => 'unlike',
-                    ],
-                ],
-                [
-                    'class' => yii\rest\UrlRule::class,
-                    'controller' => ['api/file'],
-                    'pluralize' => false,
-                    'extraPatterns' => [
-                    ],
-                ],
+                'POST api/like/<id:\d+>' => 'api/like/like',
+                'DELETE api/like/<id:\d+>' => 'api/like/unlike',
 
-                [
-                    'class' => yii\rest\UrlRule::class,
-                    'controller' => ['api/ai'],
-                    'pluralize' => false,
-                    'extraPatterns' => [
-                        'POST ai/generate-title' => 'generate-title',
-                        'POST ai/generate-summary' => 'generate-summary',
-                        'POST ai/generate-description' => 'generate-description',
-                    ],
-                ],
-
-                [
-                    'class' => yii\rest\UrlRule::class,
-                    'controller' => ['api/ai-log'],
-                    'pluralize' => false,
-                    'extraPatterns' => [
-
-                    ],
-                ],
+                //ai
+                'POST api/ai/generate-title' => 'api/ai/generate-title',
+                'POST api/ai/generate-summary' => 'api/ai/generate-summary',
+                'POST api/ai/generate-description' => 'api/ai/generate-description',
             ],
         ],
     ],
