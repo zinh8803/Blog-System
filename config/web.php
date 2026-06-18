@@ -112,7 +112,7 @@ $config = [
                 //ai
                 'POST api/ai/generate-title' => 'api/ai/generate-title',
                 'POST api/ai/generate-summary' => 'api/ai/generate-summary',
-                'POST api/ai/generate-description' => 'api/ai/generate-description',
+                'POST api/ai/rewrite' => 'api/ai/rewrite',
             ],
         ],
     ],
