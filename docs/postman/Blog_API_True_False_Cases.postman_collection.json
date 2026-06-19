@@ -1,8 +1,8 @@
 {
   "info": {
-    "name": "Yii2 Blog API - True/False Cases",
-    "_postman_id": "8f4b88a9-c1bd-4b25-8d7b-111111111111",
-    "description": "Postman cases generated from README, config/web.php routes, API controllers, form validation and RBAC seed. Set host to http://localhost:8080/api and run in order.",
+    "name": "Yii2 Blog API - Postman Test Cases",
+    "_postman_id": "8f4b88a9-c1bd-4b25-8d7b-222222222222",
+    "description": "Generated from config/web.php, controllers, forms, and RBAC seed. Set host to http://localhost:8080/api, run migrations + php yii rbac/init, then run folders in order. Image requests use docs/postman/assets/sample.png; if Postman blocks it, set Postman Working Directory to the project root or choose the file manually.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -14,228 +14,140 @@
     { "key": "category_id", "value": "" },
     { "key": "tag_id", "value": "" },
     { "key": "post_id", "value": "" },
-    { "key": "author2_post_id", "value": "" },
     { "key": "post_slug", "value": "" },
+    { "key": "author2_post_id", "value": "" },
     { "key": "comment_id", "value": "" },
-    { "key": "reply_id", "value": "" }
+    { "key": "reply_id", "value": "" },
+    { "key": "file_id", "value": "999999" },
+    { "key": "thumbnail_file_id", "value": "" },
+    { "key": "content_file_id", "value": "" },
+    { "key": "content_file_url", "value": "" },
+    { "key": "media_post_id", "value": "" },
+    { "key": "media_post_slug", "value": "" }
   ],
   "item": [
+    {
+      "name": "00 Health And Public Routes",
+      "item": [
+        {
+          "name": "TRUE - Public category list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{host}}/category?page=1&per-page=10"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }]
+        },
+        {
+          "name": "TRUE - Public post list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{host}}/post?page=1&per-page=10"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);", "pm.expect(pm.response.json()).to.have.property('_meta');"] } }]
+        },
+        {
+          "name": "FALSE - Unknown route",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{host}}/not-found"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(404);"] } }]
+        }
+      ]
+    },
     {
       "name": "01 Auth",
       "item": [
         {
           "name": "TRUE - Login admin",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.response.to.have.status(200);",
-                  "const json = pm.response.json();",
-                  "pm.expect(json.status).to.eql(true);",
-                  "pm.collectionVariables.set('admin_token', json.data.access_token);"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"123456\"\n}"
-            },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"123456\"\n}" },
             "url": "{{host}}/auth/login"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.expect(json.data.access_token).to.be.a('string');", "pm.collectionVariables.set('admin_token', json.data.access_token);"] } }]
         },
         {
           "name": "TRUE - Login author",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.response.to.have.status(200);",
-                  "const json = pm.response.json();",
-                  "pm.expect(json.status).to.eql(true);",
-                  "pm.collectionVariables.set('author_token', json.data.access_token);"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"author1@gmail.com\",\n  \"password\": \"123456\"\n}"
-            },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"author1@gmail.com\",\n  \"password\": \"123456\"\n}" },
             "url": "{{host}}/auth/login"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.collectionVariables.set('author_token', json.data.access_token);"] } }]
         },
         {
           "name": "TRUE - Login author2",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.response.to.have.status(200);",
-                  "const json = pm.response.json();",
-                  "pm.expect(json.status).to.eql(true);",
-                  "pm.collectionVariables.set('author2_token', json.data.access_token);"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"author2@gmail.com\",\n  \"password\": \"123456\"\n}"
-            },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"author2@gmail.com\",\n  \"password\": \"123456\"\n}" },
             "url": "{{host}}/auth/login"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.collectionVariables.set('author2_token', json.data.access_token);"] } }]
         },
         {
           "name": "TRUE - Login reader",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.response.to.have.status(200);",
-                  "const json = pm.response.json();",
-                  "pm.expect(json.status).to.eql(true);",
-                  "pm.collectionVariables.set('reader_token', json.data.access_token);"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"reader@gmail.com\",\n  \"password\": \"123456\"\n}"
-            },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"reader@gmail.com\",\n  \"password\": \"123456\"\n}" },
             "url": "{{host}}/auth/login"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.collectionVariables.set('reader_token', json.data.access_token);"] } }]
         },
         {
           "name": "TRUE - Register unique reader",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.response.to.have.status(201);",
-                  "const json = pm.response.json();",
-                  "pm.expect(json).to.have.property('status');"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"username\": \"postman_{{$guid}}\",\n  \"email\": \"postman_{{$guid}}@example.com\",\n  \"password\": \"123456\"\n}"
-            },
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"postman_{{$timestamp}}\",\n  \"email\": \"postman_{{$timestamp}}@example.com\",\n  \"password\": \"123456\"\n}" },
             "url": "{{host}}/auth/register"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(201);", "pm.expect(pm.response.json().status).to.eql(true);"] } }]
         },
         {
           "name": "FALSE - Login wrong password",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.response.to.have.status(401);",
-                  "pm.expect(pm.response.json().status).to.eql(false);"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"wrong-password\"\n}"
-            },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"wrong-password\"\n}" },
             "url": "{{host}}/auth/login"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(401);", "pm.expect(pm.response.json().status).to.eql(false);"] } }]
         },
         {
-          "name": "FALSE - Register missing username",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.response.to.have.status(422);",
-                  "pm.expect(pm.response.json().status).to.eql(false);"
-                ]
-              }
-            }
-          ],
+          "name": "FALSE - Register duplicate email",
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"bad-register@example.com\",\n  \"password\": \"123456\"\n}"
-            },
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"admin_dup_{{$timestamp}}\",\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"123456\"\n}" },
             "url": "{{host}}/auth/register"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }]
         },
         {
           "name": "TRUE - Me with token",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.response.to.have.status(200);",
-                  "pm.expect(pm.response.json().status).to.eql(true);"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "GET",
             "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
             "url": "{{host}}/auth/me"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }]
         },
         {
           "name": "FALSE - Me without token",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": ["pm.response.to.have.status(401);"]
-              }
-            }
-          ],
           "request": {
             "method": "GET",
             "header": [],
             "url": "{{host}}/auth/me"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(401);"] } }]
         }
       ]
     },
@@ -243,57 +155,55 @@
       "name": "02 Category",
       "item": [
         {
-          "name": "TRUE - List public categories",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
-          "request": { "method": "GET", "header": [], "url": "{{host}}/category?name=&page=1&limit=10" }
-        },
-        {
           "name": "TRUE - Create category as admin",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.response.to.have.status(201);",
-                  "const json = pm.response.json();",
-                  "pm.expect(json.status).to.eql(true);",
-                  "pm.collectionVariables.set('category_id', json.data.id);"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{admin_token}}" }
             ],
-            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Postman Category {{$guid}}\",\n  \"status\": 1\n}" },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Postman Category {{$timestamp}}\",\n  \"status\": 1\n}" },
             "url": "{{host}}/category"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(201);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.collectionVariables.set('category_id', json.data.id);"] } }]
         },
         {
           "name": "TRUE - View category",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
-          "request": { "method": "GET", "header": [], "url": "{{host}}/category/{{category_id}}" }
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{host}}/category/{{category_id}}"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }]
+        },
+        {
+          "name": "TRUE - Update category as admin",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Postman Category Updated {{$timestamp}}\",\n  \"status\": 1\n}" },
+            "url": "{{host}}/category/{{category_id}}"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }]
         },
         {
           "name": "FALSE - Create category as reader forbidden",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(403);"] } }],
           "request": {
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{reader_token}}" }
             ],
-            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Reader Category {{$guid}}\",\n  \"status\": 1\n}" },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Reader Category {{$timestamp}}\",\n  \"status\": 1\n}" },
             "url": "{{host}}/category"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(403);"] } }]
         },
         {
           "name": "FALSE - Create category missing name",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }],
           "request": {
             "method": "POST",
             "header": [
@@ -302,12 +212,17 @@
             ],
             "body": { "mode": "raw", "raw": "{\n  \"status\": 1\n}" },
             "url": "{{host}}/category"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }]
         },
         {
-          "name": "FALSE - View category not found",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(404);"] } }],
-          "request": { "method": "GET", "header": [], "url": "{{host}}/category/999999" }
+          "name": "FALSE - Category not found",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{host}}/category/999999"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(404);"] } }]
         }
       ]
     },
@@ -315,52 +230,55 @@
       "name": "03 Tag",
       "item": [
         {
-          "name": "TRUE - List public tags",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
-          "request": { "method": "GET", "header": [], "url": "{{host}}/tag?name=&page=1&limit=10" }
+          "name": "TRUE - Public tag list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{host}}/tag?page=1&per-page=10"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }]
         },
         {
           "name": "TRUE - Create tag as author",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.response.to.have.status(201);",
-                  "const json = pm.response.json();",
-                  "pm.expect(json.status).to.eql(true);",
-                  "pm.collectionVariables.set('tag_id', json.data.id);"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{author_token}}" }
             ],
-            "body": { "mode": "raw", "raw": "{\n  \"name\": \"postman-tag-{{$guid}}\"\n}" },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"postman-tag-{{$timestamp}}\"\n}" },
             "url": "{{host}}/tag"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(201);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.collectionVariables.set('tag_id', json.data.id);"] } }]
+        },
+        {
+          "name": "TRUE - Update tag as author",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{author_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"postman-tag-updated-{{$timestamp}}\"\n}" },
+            "url": "{{host}}/tag/{{tag_id}}"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }]
         },
         {
           "name": "FALSE - Create tag as reader forbidden",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(403);"] } }],
           "request": {
             "method": "POST",
             "header": [
               { "key": "Content-Type", "value": "application/json" },
               { "key": "Authorization", "value": "Bearer {{reader_token}}" }
             ],
-            "body": { "mode": "raw", "raw": "{\n  \"name\": \"reader-tag-{{$guid}}\"\n}" },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"reader-tag-{{$timestamp}}\"\n}" },
             "url": "{{host}}/tag"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(403);"] } }]
         },
         {
           "name": "FALSE - Create tag missing name",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }],
           "request": {
             "method": "POST",
             "header": [
@@ -369,7 +287,8 @@
             ],
             "body": { "mode": "raw", "raw": "{}" },
             "url": "{{host}}/tag"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }]
         }
       ]
     },
@@ -378,21 +297,6 @@
       "item": [
         {
           "name": "TRUE - Create post as author",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.response.to.have.status(201);",
-                  "const json = pm.response.json();",
-                  "pm.expect(json.status).to.eql(true);",
-                  "pm.collectionVariables.set('post_id', json.data.id);",
-                  "pm.collectionVariables.set('post_slug', json.data.slug);"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [
@@ -401,29 +305,32 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Postman Post {{$guid}}\",\n  \"summary\": \"Short summary\",\n  \"content\": \"Post content minimum 10 characters\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}},\n  \"thumbnail_file_id\": null,\n  \"tags\": [\"yii2\", \"php\", \"postman\"]\n}"
+              "raw": "{\n  \"title\": \"Postman Post {{$timestamp}}\",\n  \"summary\": \"Short summary\",\n  \"content\": \"Post content minimum 10 characters\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}},\n  \"tags\": [\"yii2\", \"php\", \"postman\"]\n}"
             },
             "url": "{{host}}/post"
-          }
-        },
-        {
-          "name": "TRUE - List public posts",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);", "pm.expect(pm.response.json()).to.have.property('_meta');"] } }],
-          "request": { "method": "GET", "header": [], "url": "{{host}}/post?page=1&limit=10&status=published" }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(201);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.collectionVariables.set('post_id', json.data.id);", "pm.collectionVariables.set('post_slug', json.data.slug);"] } }]
         },
         {
           "name": "TRUE - View post by id",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
-          "request": { "method": "GET", "header": [], "url": "{{host}}/post/{{post_id}}" }
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{host}}/post/{{post_id}}"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }]
         },
         {
           "name": "TRUE - View post by slug",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
-          "request": { "method": "GET", "header": [], "url": "{{host}}/post/slug/{{post_slug}}" }
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{host}}/post/slug/{{post_slug}}"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }]
         },
         {
           "name": "TRUE - Update own post as author",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
           "request": {
             "method": "PUT",
             "header": [
@@ -432,14 +339,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Postman Post Updated {{$guid}}\",\n  \"summary\": \"Updated summary\",\n  \"content\": \"Updated content minimum 10 characters\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}},\n  \"thumbnail_file_id\": null,\n  \"tags\": [\"updated\", \"postman\"]\n}"
+              "raw": "{\n  \"title\": \"Postman Post Updated {{$timestamp}}\",\n  \"summary\": \"Updated summary\",\n  \"content\": \"Updated content minimum 10 characters\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}},\n  \"tags\": [\"updated\", \"postman\"]\n}"
             },
             "url": "{{host}}/post/{{post_id}}"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }]
         },
         {
           "name": "FALSE - Create post as reader forbidden",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(403);"] } }],
           "request": {
             "method": "POST",
             "header": [
@@ -448,14 +355,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Reader Post {{$guid}}\",\n  \"content\": \"Reader cannot create this post\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}}\n}"
+              "raw": "{\n  \"title\": \"Reader Post {{$timestamp}}\",\n  \"summary\": \"Reader summary\",\n  \"content\": \"Reader cannot create this post\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}}\n}"
             },
             "url": "{{host}}/post"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(403);"] } }]
         },
         {
           "name": "FALSE - Create post invalid payload",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }],
           "request": {
             "method": "POST",
             "header": [
@@ -464,27 +371,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Invalid Post {{$guid}}\",\n  \"content\": \"short\",\n  \"status\": \"invalid-status\",\n  \"category_id\": 999999\n}"
+              "raw": "{\n  \"title\": \"Invalid Post {{$timestamp}}\",\n  \"content\": \"short\",\n  \"status\": \"invalid-status\",\n  \"category_id\": 999999\n}"
             },
             "url": "{{host}}/post"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }]
         },
         {
-          "name": "TRUE - Create post as author2",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.response.to.have.status(201);",
-                  "const json = pm.response.json();",
-                  "pm.expect(json.status).to.eql(true);",
-                  "pm.collectionVariables.set('author2_post_id', json.data.id);"
-                ]
-              }
-            }
-          ],
+          "name": "TRUE - Create second author's post",
           "request": {
             "method": "POST",
             "header": [
@@ -493,24 +387,14 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Author2 Post {{$guid}}\",\n  \"summary\": \"Author2 summary\",\n  \"content\": \"Author2 post content minimum 10 characters\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}},\n  \"thumbnail_file_id\": null,\n  \"tags\": [\"author2\", \"postman\"]\n}"
+              "raw": "{\n  \"title\": \"Author2 Post {{$timestamp}}\",\n  \"summary\": \"Author2 summary\",\n  \"content\": \"Author2 post content minimum 10 characters\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}},\n  \"tags\": [\"author2\", \"postman\"]\n}"
             },
             "url": "{{host}}/post"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(201);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.collectionVariables.set('author2_post_id', json.data.id);"] } }]
         },
         {
           "name": "FALSE - Author cannot update another author's post",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.response.to.have.status(403);"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "PUT",
             "header": [
@@ -519,36 +403,20 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Author1 Tries Update Author2 Post {{$guid}}\",\n  \"summary\": \"Should be forbidden\",\n  \"content\": \"This update should be rejected by owner RBAC rule\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}},\n  \"thumbnail_file_id\": null,\n  \"tags\": [\"forbidden\"]\n}"
+              "raw": "{\n  \"title\": \"Forbidden Update {{$timestamp}}\",\n  \"summary\": \"Should be forbidden\",\n  \"content\": \"This update should be rejected by owner rule\",\n  \"status\": \"published\",\n  \"category_id\": {{category_id}}\n}"
             },
             "url": "{{host}}/post/{{author2_post_id}}"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(403);"] } }]
         },
         {
-          "name": "FALSE - Author cannot delete another author's post",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.response.to.have.status(403);"
-                ]
-              }
-            }
-          ],
+          "name": "FALSE - Post not found",
           "request": {
-            "method": "DELETE",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{author_token}}" }
-            ],
-            "url": "{{host}}/post/{{author2_post_id}}"
-          }
-        },
-        {
-          "name": "FALSE - View post not found",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(404);"] } }],
-          "request": { "method": "GET", "header": [], "url": "{{host}}/post/999999" }
+            "method": "GET",
+            "header": [],
+            "url": "{{host}}/post/999999"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(404);"] } }]
         }
       ]
     },
@@ -557,20 +425,6 @@
       "item": [
         {
           "name": "TRUE - Create root comment as reader",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.response.to.have.status(201);",
-                  "const json = pm.response.json();",
-                  "pm.expect(json.status).to.eql(true);",
-                  "pm.collectionVariables.set('comment_id', json.data.id);"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [
@@ -579,24 +433,11 @@
             ],
             "body": { "mode": "raw", "raw": "{\n  \"post_id\": {{post_id}},\n  \"content\": \"This is a comment\"\n}" },
             "url": "{{host}}/comment"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(201);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.collectionVariables.set('comment_id', json.data.id);"] } }]
         },
         {
           "name": "TRUE - Create reply as reader",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.response.to.have.status(201);",
-                  "const json = pm.response.json();",
-                  "pm.expect(json.status).to.eql(true);",
-                  "pm.collectionVariables.set('reply_id', json.data.id);"
-                ]
-              }
-            }
-          ],
           "request": {
             "method": "POST",
             "header": [
@@ -605,16 +446,20 @@
             ],
             "body": { "mode": "raw", "raw": "{\n  \"post_id\": {{post_id}},\n  \"parent_id\": {{comment_id}},\n  \"content\": \"This is a reply\"\n}" },
             "url": "{{host}}/comment"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(201);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.collectionVariables.set('reply_id', json.data.id);"] } }]
         },
         {
           "name": "TRUE - List comments by post",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
-          "request": { "method": "GET", "header": [], "url": "{{host}}/comment/post/{{post_id}}" }
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{host}}/comment/post/{{post_id}}?page=1&per-page=10"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);", "pm.expect(pm.response.json()).to.have.property('_meta');"] } }]
         },
         {
           "name": "TRUE - Update own comment",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
           "request": {
             "method": "PUT",
             "header": [
@@ -623,21 +468,21 @@
             ],
             "body": { "mode": "raw", "raw": "{\n  \"content\": \"Updated reader comment\"\n}" },
             "url": "{{host}}/comment/{{comment_id}}"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }]
         },
         {
           "name": "FALSE - Create comment without token",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(401);"] } }],
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": { "mode": "raw", "raw": "{\n  \"post_id\": {{post_id}},\n  \"content\": \"Unauthorized comment\"\n}" },
             "url": "{{host}}/comment"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(401);"] } }]
         },
         {
           "name": "FALSE - Reply to reply not allowed",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }],
           "request": {
             "method": "POST",
             "header": [
@@ -646,11 +491,11 @@
             ],
             "body": { "mode": "raw", "raw": "{\n  \"post_id\": {{post_id}},\n  \"parent_id\": {{reply_id}},\n  \"content\": \"Reply to reply\"\n}" },
             "url": "{{host}}/comment"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }]
         },
         {
           "name": "FALSE - Create comment invalid post",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }],
           "request": {
             "method": "POST",
             "header": [
@@ -659,7 +504,8 @@
             ],
             "body": { "mode": "raw", "raw": "{\n  \"post_id\": 999999,\n  \"content\": \"Invalid post comment\"\n}" },
             "url": "{{host}}/comment"
-          }
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }]
         }
       ]
     },
@@ -668,43 +514,245 @@
       "item": [
         {
           "name": "TRUE - Like post",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.expect(json.data.liked).to.eql(true);"] } }],
-          "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{reader_token}}" }], "url": "{{host}}/like/toggle/{{post_id}}" }
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{reader_token}}" }],
+            "url": "{{host}}/like/{{post_id}}"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.expect(json.data.liked).to.eql(true);"] } }]
         },
         {
           "name": "TRUE - Unlike post",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.expect(json.data.liked).to.eql(false);"] } }],
-          "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{reader_token}}" }], "url": "{{host}}/like/toggle/{{post_id}}" }
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{reader_token}}" }],
+            "url": "{{host}}/like/{{post_id}}"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.expect(json.data.liked).to.eql(false);"] } }]
         },
         {
-          "name": "FALSE - Toggle like without token",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(401);"] } }],
-          "request": { "method": "POST", "header": [], "url": "{{host}}/like/toggle/{{post_id}}" }
+          "name": "FALSE - Like without token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{host}}/like/{{post_id}}"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(401);"] } }]
         }
       ]
     },
     {
-      "name": "07 Trash And Delete",
+      "name": "07 File And Media Post",
+      "item": [
+        {
+          "name": "TRUE - Public file list",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{host}}/file?page=1&per-page=10"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }]
+        },
+        {
+          "name": "TRUE - Upload thumbnail file",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{author_token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "folder", "value": "thumbnail", "type": "text" },
+                { "key": "imageFile", "type": "file", "src": "D:/laragon/www/intern/Blog_System/docs/postman/assets/sample.png", "description": "Sample image. If Postman blocks it, choose docs/postman/assets/sample.png manually." }
+              ]
+            },
+            "url": "{{host}}/file"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.expect(json.data.id).to.exist;", "pm.expect(json.data.url).to.be.a('string');", "pm.collectionVariables.set('thumbnail_file_id', json.data.id);", "pm.collectionVariables.set('file_id', json.data.id);"] } }]
+        },
+        {
+          "name": "TRUE - Upload content file",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{author_token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "folder", "value": "content", "type": "text" },
+                { "key": "imageFile", "type": "file", "src": "D:/laragon/www/intern/Blog_System/docs/postman/assets/sample.png", "description": "Sample image. If Postman blocks it, choose docs/postman/assets/sample.png manually." }
+              ]
+            },
+            "url": "{{host}}/file"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.expect(json.data.id).to.exist;", "pm.expect(json.data.url).to.be.a('string');", "pm.collectionVariables.set('content_file_id', json.data.id);", "pm.collectionVariables.set('content_file_url', json.data.url);"] } }]
+        },
+        {
+          "name": "TRUE - View uploaded thumbnail file",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{host}}/file/{{thumbnail_file_id}}"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.expect(json.data.id).to.eql(Number(pm.collectionVariables.get('thumbnail_file_id')));"] } }]
+        },
+        {
+          "name": "TRUE - View uploaded content file",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{host}}/file/{{content_file_id}}"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.expect(json.data.id).to.eql(Number(pm.collectionVariables.get('content_file_id')));"] } }]
+        },
+        {
+          "name": "TRUE - Create post with uploaded thumbnail and img content",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{author_token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "title", "value": "Postman Media Post {{$timestamp}}", "type": "text" },
+                { "key": "summary", "value": "Post with thumbnail and content image", "type": "text" },
+                { "key": "content", "value": "<p>Post content minimum 10 characters with image.</p><p><img src=\"{{content_file_url}}\" alt=\"content image\"></p>", "type": "text" },
+                { "key": "status", "value": "published", "type": "text" },
+                { "key": "category_id", "value": "{{category_id}}", "type": "text" },
+                { "key": "tags[]", "value": "media", "type": "text" },
+                { "key": "tags[]", "value": "thumbnail", "type": "text" },
+                { "key": "imageFile", "type": "file", "src": "D:/laragon/www/intern/Blog_System/docs/postman/assets/sample.png", "description": "Sample image. If Postman blocks it, choose docs/postman/assets/sample.png manually." }
+              ]
+            },
+            "url": "{{host}}/post"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(201);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.expect(json.data.thumbnail_file).to.be.a('string');", "pm.expect(json.data.content).to.include('<img');", "pm.expect(json.data.content).to.include(pm.collectionVariables.get('content_file_url'));", "pm.collectionVariables.set('media_post_id', json.data.id);", "pm.collectionVariables.set('media_post_slug', json.data.slug);"] } }]
+        },
+        {
+          "name": "TRUE - View media post by slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{host}}/post/slug/{{media_post_slug}}"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "const json = pm.response.json();", "pm.expect(json.status).to.eql(true);", "pm.expect(json.data.thumbnail_file).to.be.a('string');", "pm.expect(json.data.content).to.include(pm.collectionVariables.get('content_file_url'));"] } }]
+        },
+        {
+          "name": "FALSE - Upload missing imageFile",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{author_token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "folder", "value": "content", "type": "text" }]
+            },
+            "url": "{{host}}/file"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }]
+        },
+        {
+          "name": "FALSE - Upload as reader forbidden",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{reader_token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "folder", "value": "content", "type": "text" }]
+            },
+            "url": "{{host}}/file"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(403);"] } }]
+        },
+        {
+          "name": "FALSE - File not found",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{host}}/file/999999"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(404);"] } }]
+        }
+      ]
+    },
+    {
+      "name": "08 AI",
+      "item": [
+        {
+          "name": "FALSE - Generate title missing description",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{author_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": "{{host}}/ai/generate-title"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }]
+        },
+        {
+          "name": "FALSE - Reader cannot use AI",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{reader_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Generate title for Yii2 blog\"\n}" },
+            "url": "{{host}}/ai/generate-title"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(403);"] } }]
+        },
+        {
+          "name": "FALSE - Rewrite missing instruction",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{author_token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"text\": \"Yii2 is fast.\"\n}" },
+            "url": "{{host}}/ai/rewrite"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(422);", "pm.expect(pm.response.json().status).to.eql(false);"] } }]
+        }
+      ]
+    },
+    {
+      "name": "09 Trash And Cleanup",
       "item": [
         {
           "name": "TRUE - Soft delete own post",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
-          "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{author_token}}" }], "url": "{{host}}/post/{{post_id}}" }
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{author_token}}" }],
+            "url": "{{host}}/post/{{post_id}}"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }]
         },
         {
           "name": "TRUE - List trash authenticated",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);", "pm.expect(pm.response.json()).to.have.property('_meta');"] } }],
-          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{author_token}}" }], "url": "{{host}}/post/trash?page=1&limit=10" }
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{author_token}}" }],
+            "url": "{{host}}/post/trash?page=1&per-page=10"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);", "pm.expect(pm.response.json()).to.have.property('_meta');"] } }]
         },
         {
           "name": "TRUE - Restore own post",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }],
-          "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{author_token}}" }], "url": "{{host}}/post/{{post_id}}/restore" }
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{author_token}}" }],
+            "url": "{{host}}/post/{{post_id}}/restore"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(200);", "pm.expect(pm.response.json().status).to.eql(true);"] } }]
         },
         {
-          "name": "FALSE - Delete post without token",
-          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(401);"] } }],
-          "request": { "method": "DELETE", "header": [], "url": "{{host}}/post/{{post_id}}" }
+          "name": "FALSE - Delete without token",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{host}}/post/{{post_id}}"
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.response.to.have.status(401);"] } }]
         }
       ]
     }
