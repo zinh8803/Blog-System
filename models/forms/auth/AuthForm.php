@@ -3,6 +3,8 @@
 namespace app\models\forms\auth;
 
 use app\models\User;
+use RuntimeException;
+use Yii;
 
 class AuthForm extends User
 {
@@ -26,5 +28,29 @@ class AuthForm extends User
             ['email', 'unique', 'targetClass' => User::class, 'on' => self::SCENARIO_REGISTER],
             ['username', 'unique', 'targetClass' => User::class, 'on' => self::SCENARIO_REGISTER],
         ];
+    }
+
+    public function registerUser(): ?User
+    {
+        if (!$this->validate()) {
+            return null;
+        }
+
+        $user = new User();
+        $user->username = $this->username;
+        $user->email = $this->email;
+        $user->setPassword($this->password);
+
+        if (!$user->save(false)) {
+            throw new RuntimeException('Register failed');
+        }
+
+        $role = Yii::$app->authManager->getRole('reader');
+
+        if ($role) {
+            Yii::$app->authManager->assign($role, $user->id);
+        }
+
+        return $user;
     }
 }

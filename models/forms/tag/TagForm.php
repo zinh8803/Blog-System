@@ -3,6 +3,7 @@
 namespace app\models\forms\tag;
 
 use app\models\Tag;
+use RuntimeException;
 
 class TagForm extends Tag
 {
@@ -25,5 +26,34 @@ class TagForm extends Tag
             [['name'], 'unique', 'targetClass' => Tag::class, 'filter' => ['!=', 'id', $this->id],
                 'on' => self::SCENARIO_UPDATE, 'message' => 'Name already exists.'],
         ]);
+    }
+
+    public function createTag(): ?Tag
+    {
+        if (!$this->validate()) {
+            return null;
+        }
+
+        $model = new Tag();
+        $model->setAttributes($this->getAttributes(['name', 'slug']), false);
+
+        if (!$model->save(false)) {
+            throw new RuntimeException('Failed to create tag.');
+        }
+
+        return $model;
+    }
+
+    public function updateTag(): ?self
+    {
+        if (!$this->validate()) {
+            return null;
+        }
+
+        if (!$this->save(false)) {
+            throw new RuntimeException('Failed to update tag.');
+        }
+
+        return $this;
     }
 }

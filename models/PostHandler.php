@@ -135,8 +135,9 @@ class PostHandler extends Post
         $transaction = Yii::$app->db->beginTransaction();
 
         try {
-            Yii::$app->r2->delete($post->thumbnailFile?->path);
-
+            if ($post->thumbnailFile?->path) {
+                Yii::$app->r2->delete($post->thumbnailFile?->path);
+            }
             PostTag::deleteAll(['post_id' => $post->id]);
             PostFile::deleteAll(['post_id' => $post->id]);
             Comment::deleteAll(['post_id' => $post->id]);

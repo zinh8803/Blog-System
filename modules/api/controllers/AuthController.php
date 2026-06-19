@@ -43,28 +43,15 @@ class AuthController extends BaseController
 
         $form->load(Yii::$app->request->bodyParams, '');
 
-        if (!$form->validate()) {
-            return $this->formatJson(false, $form->errors, 'Validation failed', 422);
-        }
-
-        $user = new User();
-        $user->username = $form->username;
-        $user->email = $form->email;
-        $user->setPassword($form->password);
         try {
-            if ($user->save(false)) {
-                $auth = Yii::$app->authManager;
-                $role = $auth->getRole('reader');
-
-                if ($role) {
-                    $auth->assign($role, $user->id);
-                }
-                return $this->formatJson(true, null, 'Register success', 201);
+            if (!$form->registerUser()) {
+                return $this->formatJson(false, $form->errors, 'Validation failed', 422);
             }
+
+            return $this->formatJson(true, null, 'Register success', 201);
         } catch (\Exception $e) {
             return $this->formatJson(false, null, $e->getMessage(), 500);
         }
-        return $this->formatJson(false, $user->getErrors(), 'Register failed', 500);
     }
 
     public function actionLogin()

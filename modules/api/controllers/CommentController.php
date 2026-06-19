@@ -2,7 +2,6 @@
 
 namespace app\modules\api\controllers;
 
-use app\models\Comment;
 use app\models\forms\comment\CommentForm;
 use app\models\search\CommentSearch;
 use Yii;
@@ -41,16 +40,13 @@ class CommentController extends BaseController
         $form = new CommentForm(['scenario' => CommentForm::SCENARIO_CREATE]);
         $form->load(Yii::$app->request->bodyParams, '');
 
-        if (!$form->validate()) {
-            return $this->formatJson(false, $form->errors, 'Validation failed', 422);
-        }
-
-        $comment = new Comment();
-        $comment->setAttributes($form->attributes, false);
         try {
-            if ($comment->save(false)) {
-                return $this->formatJson(true, $comment, 'Comment created successfully', 201);
+            $comment = $form->createComment();
+            if (!$comment) {
+                return $this->formatJson(false, $form->errors, 'Validation failed', 422);
             }
+
+            return $this->formatJson(true, $comment, 'Comment created successfully', 201);
         } catch (\Throwable $exception) {
             Yii::error($exception->getMessage(), __METHOD__);
             return $this->formatJson(false, null, 'Create failed: ' . $exception->getMessage(), 500);
@@ -63,15 +59,13 @@ class CommentController extends BaseController
         $this->checkPermission('comment.updateOwn', ['comment' => $comment]);
         $comment->scenario = CommentForm::SCENARIO_UPDATE;
         $comment->load(Yii::$app->request->bodyParams, '');
-        if (!$comment->validate()) {
-            return $this->formatJson(false, $comment->errors, 'Validation failed', 422);
-        }
 
         try {
-            if ($comment->save(false)) {
-                return $this->formatJson(true, $comment, 'Comment updated successfully');
+            if (!$comment->updateComment()) {
+                return $this->formatJson(false, $comment->errors, 'Validation failed', 422);
             }
-            return $this->formatJson(false, $comment->errors, 'Update failed', 400);
+
+            return $this->formatJson(true, $comment, 'Comment updated successfully');
         } catch (\Throwable $exception) {
             Yii::error($exception->getMessage(), __METHOD__);
             return $this->formatJson(false, null, 'Update failed: ' . $exception->getMessage(), 500);

@@ -4,6 +4,7 @@ namespace app\models\forms\comment;
 
 use app\models\Comment;
 use app\models\Post;
+use RuntimeException;
 
 class CommentForm extends Comment
 {
@@ -52,5 +53,34 @@ class CommentForm extends Comment
                 'Cannot reply to a reply comment.'
             );
         }
+    }
+
+    public function createComment(): ?Comment
+    {
+        if (!$this->validate()) {
+            return null;
+        }
+
+        $comment = new Comment();
+        $comment->setAttributes($this->getAttributes(['post_id', 'parent_id', 'content']), false);
+
+        if (!$comment->save(false)) {
+            throw new RuntimeException('Failed to create comment.');
+        }
+
+        return $comment;
+    }
+
+    public function updateComment(): ?self
+    {
+        if (!$this->validate()) {
+            return null;
+        }
+
+        if (!$this->save(false)) {
+            throw new RuntimeException('Failed to update comment.');
+        }
+
+        return $this;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace app\modules\api\controllers;
 
-use app\models\Like;
+use app\models\forms\like\LikeForm;
 use yii\filters\auth\HttpBearerAuth;
 
 class LikeController extends BaseController
@@ -22,13 +22,7 @@ class LikeController extends BaseController
     public function actionLike($id)
     {
         $this->checkPermission('like.toggle');
-        $like = Like::findByPostId($id);
-
-        if (!$like) {
-            $like = new Like();
-            $like->post_id = $id;
-            $like->save(false);
-        }
+        (new LikeForm())->likePost((int) $id);
 
         return $this->formatJson(true, ['liked' => true], 'Liked');
     }
@@ -36,11 +30,7 @@ class LikeController extends BaseController
     public function actionUnlike($id)
     {
         $this->checkPermission('like.toggle');
-        $like = Like::findByPostId($id);
-
-        if ($like) {
-            $like->delete();
-        }
+        (new LikeForm())->unlikePost((int) $id);
 
         return $this->formatJson(true, ['liked' => false], 'Unliked');
     }

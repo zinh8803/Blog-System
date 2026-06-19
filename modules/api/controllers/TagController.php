@@ -5,7 +5,6 @@ namespace app\modules\api\controllers;
 
 use app\models\forms\tag\TagForm;
 use app\models\search\TagSearch;
-use app\models\Tag;
 use yii\filters\auth\HttpBearerAuth;
 use yii\web\NotFoundHttpException;
 
@@ -50,17 +49,14 @@ class TagController extends BaseController
         $this->checkPermission('tag.create');
         $form = new TagForm(['scenario' => TagForm::SCENARIO_CREATE,]);
         $form->load($this->request->bodyParams, '');
-        if (!$form->validate()) {
-            return $this->formatJson(false, $form->errors, 'Validation failed', 422);
-        }
-
-        $model = new Tag();
-        $model->setAttributes($form->attributes, false);
 
         try {
-            if ($model->save(false)) {
-                return $this->formatJson(true, $model, 'Category created successfully', 201);
+            $model = $form->createTag();
+            if (!$model) {
+                return $this->formatJson(false, $form->errors, 'Validation failed', 422);
             }
+
+            return $this->formatJson(true, $model, 'Category created successfully', 201);
         } catch (\Throwable $exception) {
             \Yii::error($exception->getMessage(), __METHOD__);
             throw new NotFoundHttpException($exception->getMessage());
@@ -73,13 +69,12 @@ class TagController extends BaseController
         $model = $this->findModel($id);
         $model->scenario = TagForm::SCENARIO_UPDATE;
         $model->load($this->request->bodyParams, '');
-        if (!$model->validate()) {
-            return $this->formatJson(false, $model->errors, 'Validation failed', 422);
-        }
         try {
-            if ($model->save(false)) {
-                return $this->formatJson(true, $model, 'Tag updated successfully');
+            if (!$model->updateTag()) {
+                return $this->formatJson(false, $model->errors, 'Validation failed', 422);
             }
+
+            return $this->formatJson(true, $model, 'Tag updated successfully');
         } catch (\Throwable $exception) {
             \Yii::error($exception->getMessage(), __METHOD__);
             throw new NotFoundHttpException($exception->getMessage());

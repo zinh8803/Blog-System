@@ -3,6 +3,7 @@
 namespace app\models\forms\category;
 
 use app\models\Category;
+use RuntimeException;
 
 class CategoryForm extends Category
 {
@@ -24,5 +25,34 @@ class CategoryForm extends Category
             [['name'], 'unique', 'targetClass' => Category::class, 'filter' => ['!=', 'id', $this->id],
                 'on' => self::SCENARIO_UPDATE, 'message' => 'Name already exists.'],
         ]);
+    }
+
+    public function createCategory(): ?Category
+    {
+        if (!$this->validate()) {
+            return null;
+        }
+
+        $model = new Category();
+        $model->setAttributes($this->getAttributes(['name', 'slug', 'status']), false);
+
+        if (!$model->save(false)) {
+            throw new RuntimeException('Failed to create category.');
+        }
+
+        return $model;
+    }
+
+    public function updateCategory(): ?self
+    {
+        if (!$this->validate()) {
+            return null;
+        }
+
+        if (!$this->save(false)) {
+            throw new RuntimeException('Failed to update category.');
+        }
+
+        return $this;
     }
 }

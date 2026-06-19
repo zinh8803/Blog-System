@@ -2,12 +2,11 @@
 
 namespace app\modules\api\controllers;
 
-use app\models\File;
 use app\models\forms\file\FileForm;
+use app\models\File;
 use app\models\search\FileSearch;
 use yii\filters\auth\HttpBearerAuth;
 use yii\web\NotFoundHttpException;
-use yii\web\UploadedFile;
 
 class FileController extends BaseController
 {
@@ -42,22 +41,10 @@ class FileController extends BaseController
 
         $form->load($this->request->bodyParams, '');
 
-        $form->imageFile = UploadedFile::getInstanceByName('imageFile');
-
-        if (!$form->validate()) {
-            return $this->formatJson(false, $form->errors, 'Validation failed', 422);
-        }
         try {
-            $url = \Yii::$app->r2->upload($form->imageFile, $form->folder);
-
-            $model = new File();
-            $model->original_name = $form->imageFile->name;
-            $model->path = $url['key'];
-            $model->url = $url['url'];
-            $model->mime_type = $form->imageFile->type;
-            $model->size = $form->imageFile->size;
-            if (!$model->save(false)) {
-                return $this->formatJson(false, null, 'Failed to save file record: ' . implode(', ', $model->getFirstErrors()), 500);
+            $model = $form->createFile();
+            if (!$model) {
+                return $this->formatJson(false, $form->errors, 'Validation failed', 422);
             }
 
             return $this->formatJson(true, $model, 'File uploaded successfully');
@@ -73,22 +60,10 @@ class FileController extends BaseController
         $form = new FileForm();
         $form->id = $id;
         $form->load($this->request->bodyParams, '');
-        $form->imageFile = UploadedFile::getInstanceByName('imageFile');
-        if (!$form->validate()) {
-            return $this->formatJson(false, $form->errors, 'Validation failed', 422);
-        }
-
 
         try {
-            $url = \Yii::$app->r2->update($model->path, $form->imageFile, $form->folder);
-
-            $model->original_name = $form->imageFile->name;
-            $model->path = $url['key'];
-            $model->url = $url['url'];
-            $model->mime_type = $form->imageFile->type;
-            $model->size = $form->imageFile->size;
-            if (!$model->save(false)) {
-                return $this->formatJson(false, null, 'Failed to update file record: ' . implode(', ', $model->getFirstErrors()), 500);
+            if (!$form->updateFile($model)) {
+                return $this->formatJson(false, $form->errors, 'Validation failed', 422);
             }
 
             return $this->formatJson(true, $model, 'File updated successfully');
