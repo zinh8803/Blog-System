@@ -104,6 +104,10 @@ http://localhost:8080/api
 
 [View Video Demo on Google Drive](https://drive.google.com/file/d/1KePQTFsemorjM4ZlVLNUY-GrdNA_1xhg/view?usp=drive_link)
 
+## Report pdf
+
+app/docs/report/blog_system_report.pdf
+
 ## API Response Format
 
 Success:
