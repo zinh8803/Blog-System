@@ -17,7 +17,7 @@ class m260616_101657_update_index_post_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropIndex('idx_post_status_is_deleted', '{{%posts}}');
+        $this->dropIndex('idx_posts_status_deleted_id', '{{%posts}}');
     }
 
 
