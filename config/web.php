@@ -2,7 +2,18 @@
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
+$cacheConfig = match ($_ENV['CACHE_DRIVER'] ?? 'file') {
+    'redis' => [
+        'class' => yii\redis\Cache::class,
+        'redis' => 'redis',
+        'keyPrefix' => 'blog:',
+    ],
 
+    default => [
+        'class' => yii\caching\FileCache::class,
+        'keyPrefix' => 'blog:',
+    ],
+};
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
@@ -50,8 +61,16 @@ $config = [
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
         ],
-        'cache' => [
-            'class' => \yii\caching\FileCache::class,
+        'cache' => $cacheConfig,
+
+        'redis' => [
+            'class' => yii\redis\Connection::class,
+            'hostname' => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
+            'port' => $_ENV['REDIS_PORT'] ?? 6379,
+            'database' => $_ENV['REDIS_DATABASE'] ?? 0,
+            'password' => !empty($_ENV['REDIS_PASSWORD'])
+                ? $_ENV['REDIS_PASSWORD']
+                : null,
         ],
         'user' => [
             'identityClass' => \app\models\User::class,
