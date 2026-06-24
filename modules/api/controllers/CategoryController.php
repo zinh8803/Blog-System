@@ -4,11 +4,16 @@ namespace app\modules\api\controllers;
 
 use app\models\forms\category\CategoryForm;
 use app\models\search\CategorySearch;
+use Yii;
+use yii\caching\TagDependency;
 use yii\filters\auth\HttpBearerAuth;
 use yii\web\NotFoundHttpException;
 
 class CategoryController extends BaseController
 {
+    private const CACHE_TAG = 'category';
+    private const CACHE_DURATION = 3600;
+
     public function behaviors()
     {
         $behaviors = parent::behaviors();
@@ -22,15 +27,28 @@ class CategoryController extends BaseController
 
     public function actionIndex()
     {
-        $searchModel = new CategorySearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-        return $this->formatJson(true, $dataProvider, 'Category list');
+        $params = $this->request->queryParams;
+        $cacheKey = [self::class, 'index', $params];
+
+        $response = Yii::$app->cache->getOrSet($cacheKey, function () use ($params) {
+            $searchModel = new CategorySearch();
+            $dataProvider = $searchModel->search($params);
+
+            return $this->successPaginate($dataProvider, true, 'Category list');
+        }, self::CACHE_DURATION, new TagDependency(['tags' => self::CACHE_TAG]));
+
+        Yii::$app->response->statusCode = $response['code'];
+        return $response;
     }
 
     public function actionView(int $id)
     {
-        $model = $this->findModel($id);
-        return $this->formatJson(true, $model, 'Category view');
+        $cacheKey = [self::class, 'view', $id];
+        $data = Yii::$app->cache->getOrSet($cacheKey, function () use ($id) {
+            return $this->findModel($id)->toArray();
+        }, self::CACHE_DURATION, new TagDependency(['tags' => self::CACHE_TAG]));
+
+        return $this->formatJson(true, $data, 'Category view');
     }
 
     public function actionCreate()
@@ -47,9 +65,11 @@ class CategoryController extends BaseController
                 return $this->formatJson(false, $form->errors, 'Validation failed', 422);
             }
 
+            $this->invalidateCategoryCache();
+
             return $this->formatJson(true, $model, 'Category created successfully', 201);
         } catch (\Throwable $exception) {
-            \Yii::error($exception->getMessage(), __METHOD__);
+            Yii::error($exception->getMessage(), __METHOD__);
             throw new NotFoundHttpException($exception->getMessage());
         }
     }
@@ -67,9 +87,11 @@ class CategoryController extends BaseController
                 return $this->formatJson(false, $model->errors, 'Validation failed', 422);
             }
 
+            $this->invalidateCategoryCache();
+
             return $this->formatJson(true, $model, 'Category updated successfully');
         } catch (\Throwable $exception) {
-            \Yii::error($exception->getMessage(), __METHOD__);
+            Yii::error($exception->getMessage(), __METHOD__);
 
             return $this->formatJson(false, null, 'Internal server error', 500);
         }
@@ -83,6 +105,8 @@ class CategoryController extends BaseController
         if (!$model->delete()) {
             throw new NotFoundHttpException('Failed to delete category');
         }
+        $this->invalidateCategoryCache();
+
         return $this->formatJson(true, null, 'Category deleted successfully');
     }
 
@@ -93,5 +117,10 @@ class CategoryController extends BaseController
             throw new NotFoundHttpException('Category not found');
         }
         return $model;
+    }
+
+    private function invalidateCategoryCache(): void
+    {
+        TagDependency::invalidate(Yii::$app->cache, self::CACHE_TAG);
     }
 }
