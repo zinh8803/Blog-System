@@ -42,7 +42,7 @@ class AuthForm extends User
         $user->setPassword($this->password);
 
         if (!$user->save(false)) {
-            throw new RuntimeException('Register failed');
+            throw new RuntimeException(Yii::t('app', 'Register failed'));
         }
 
         $role = Yii::$app->authManager->getRole('reader');

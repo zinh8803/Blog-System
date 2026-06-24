@@ -28,7 +28,7 @@ class CategoryController extends BaseController
     public function actionIndex()
     {
         $params = $this->request->queryParams;
-        $cacheKey = [self::class, 'index', $params];
+        $cacheKey = [self::class, 'index', Yii::$app->language, $params];
 
         $response = Yii::$app->cache->getOrSet($cacheKey, function () use ($params) {
             $searchModel = new CategorySearch();
@@ -43,7 +43,7 @@ class CategoryController extends BaseController
 
     public function actionView(int $id)
     {
-        $cacheKey = [self::class, 'view', $id];
+        $cacheKey = [self::class, 'view', Yii::$app->language, $id];
         $data = Yii::$app->cache->getOrSet($cacheKey, function () use ($id) {
             return $this->findModel($id)->toArray();
         }, self::CACHE_DURATION, new TagDependency(['tags' => self::CACHE_TAG]));

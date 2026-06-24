@@ -4,6 +4,7 @@ namespace app\models\forms\category;
 
 use app\models\Category;
 use RuntimeException;
+use Yii;
 
 class CategoryForm extends Category
 {
@@ -21,9 +22,9 @@ class CategoryForm extends Category
     public function rules(): array
     {
         return array_merge(parent::rules(), [
-            [['name'], 'unique', 'targetClass' => Category::class, 'on' => self::SCENARIO_CREATE, 'message' => 'Name already exists.',],
+            [['name'], 'unique', 'targetClass' => Category::class, 'on' => self::SCENARIO_CREATE, 'message' => Yii::t('app', 'Name already exists.'),],
             [['name'], 'unique', 'targetClass' => Category::class, 'filter' => ['!=', 'id', $this->id],
-                'on' => self::SCENARIO_UPDATE, 'message' => 'Name already exists.'],
+                'on' => self::SCENARIO_UPDATE, 'message' => Yii::t('app', 'Name already exists.')],
         ]);
     }
 
@@ -37,7 +38,7 @@ class CategoryForm extends Category
         $model->setAttributes($this->getAttributes(['name', 'slug', 'status']), false);
 
         if (!$model->save(false)) {
-            throw new RuntimeException('Failed to create category.');
+            throw new RuntimeException(Yii::t('app', 'Failed to create category.'));
         }
 
         return $model;
@@ -50,7 +51,7 @@ class CategoryForm extends Category
         }
 
         if (!$this->save(false)) {
-            throw new RuntimeException('Failed to update category.');
+            throw new RuntimeException(Yii::t('app', 'Failed to update category.'));
         }
 
         return $this;

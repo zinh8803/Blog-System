@@ -22,7 +22,7 @@ class ApiErrorHandler extends ErrorHandler
             'code' => $code,
             'status' => false,
             'data' => null,
-            'message' => $exception->getMessage() ?: 'Internal Server Error',
+            'message' => Yii::t('app', $exception->getMessage() ?: 'Internal Server Error'),
         ];
 
         Yii::$app->response->send();

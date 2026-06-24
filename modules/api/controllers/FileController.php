@@ -5,6 +5,7 @@ namespace app\modules\api\controllers;
 use app\models\forms\file\FileForm;
 use app\models\File;
 use app\models\search\FileSearch;
+use Yii;
 use yii\filters\auth\HttpBearerAuth;
 use yii\web\NotFoundHttpException;
 
@@ -49,7 +50,9 @@ class FileController extends BaseController
 
             return $this->formatJson(true, $model, 'File uploaded successfully');
         } catch (\Exception $e) {
-            return $this->formatJson(false, null, 'File upload failed: ' . $e->getMessage(), 500);
+            return $this->formatJson(false, null, Yii::t('app', 'File upload failed: {error}', [
+                'error' => $e->getMessage(),
+            ]), 500);
         }
     }
 
@@ -68,7 +71,9 @@ class FileController extends BaseController
 
             return $this->formatJson(true, $model, 'File updated successfully');
         } catch (\Exception $e) {
-            return $this->formatJson(false, null, 'File update failed: ' . $e->getMessage(), 500);
+            return $this->formatJson(false, null, Yii::t('app', 'File update failed: {error}', [
+                'error' => $e->getMessage(),
+            ]), 500);
         }
     }
 

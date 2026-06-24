@@ -4,6 +4,7 @@ namespace app\models\forms\like;
 
 use app\models\Like;
 use RuntimeException;
+use Yii;
 
 class LikeForm extends Like
 {
@@ -26,7 +27,7 @@ class LikeForm extends Like
         $like->post_id = $postId;
 
         if (!$like->save(false)) {
-            throw new RuntimeException('Failed to like post.');
+            throw new RuntimeException(Yii::t('app', 'Failed to like post.'));
         }
     }
 
@@ -39,7 +40,7 @@ class LikeForm extends Like
         }
 
         if (!$like->delete()) {
-            throw new RuntimeException('Failed to unlike post.');
+            throw new RuntimeException(Yii::t('app', 'Failed to unlike post.'));
         }
     }
 }

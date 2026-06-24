@@ -4,6 +4,7 @@ namespace app\components;
 
 use Aws\Exception\AwsException;
 use Aws\S3\S3Client;
+use Yii;
 use yii\base\Component;
 use yii\web\UploadedFile;
 
@@ -61,7 +62,9 @@ class R2Component extends Component
 
             return $uploadedFile;
         } catch (\Throwable $e) {
-            throw new \RuntimeException('Failed to update file: ' . $e->getMessage());
+            throw new \RuntimeException(Yii::t('app', 'Failed to update file: {error}', [
+                'error' => $e->getMessage(),
+            ]));
         }
     }
 

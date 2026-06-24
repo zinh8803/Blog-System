@@ -32,7 +32,7 @@ class PostController extends BaseController
     {
         try {
             $params = $this->request->queryParams;
-            $cacheKey = [self::class, 'index', $params];
+            $cacheKey = [self::class, 'index', Yii::$app->language, $params];
 
             $response = Yii::$app->cache->getOrSet($cacheKey, function () use ($params) {
                 $searchModel = new PostSearch();
@@ -70,7 +70,7 @@ class PostController extends BaseController
 
     public function actionViewBySlug($slug)
     {
-        $cacheKey = [self::class, 'view-by-slug', $slug];
+        $cacheKey = [self::class, 'view-by-slug', Yii::$app->language, $slug];
         $data = Yii::$app->cache->get($cacheKey);
 
         if ($data === false) {

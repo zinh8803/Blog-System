@@ -29,7 +29,9 @@ class CommentController extends BaseController
             return $this->successPaginate($comments, true, 'Comments retrieved successfully');
         } catch (\Throwable $exception) {
             Yii::error($exception->getMessage(), __METHOD__);
-            return $this->formatJson(false, null, 'Failed to retrieve comments: ' . $exception->getMessage(), 500);
+            return $this->formatJson(false, null, Yii::t('app', 'Failed to retrieve comments: {error}', [
+                'error' => $exception->getMessage(),
+            ]), 500);
         }
 
     }
@@ -49,7 +51,9 @@ class CommentController extends BaseController
             return $this->formatJson(true, $comment, 'Comment created successfully', 201);
         } catch (\Throwable $exception) {
             Yii::error($exception->getMessage(), __METHOD__);
-            return $this->formatJson(false, null, 'Create failed: ' . $exception->getMessage(), 500);
+            return $this->formatJson(false, null, Yii::t('app', 'Create failed: {error}', [
+                'error' => $exception->getMessage(),
+            ]), 500);
         }
     }
 
@@ -68,7 +72,9 @@ class CommentController extends BaseController
             return $this->formatJson(true, $comment, 'Comment updated successfully');
         } catch (\Throwable $exception) {
             Yii::error($exception->getMessage(), __METHOD__);
-            return $this->formatJson(false, null, 'Update failed: ' . $exception->getMessage(), 500);
+            return $this->formatJson(false, null, Yii::t('app', 'Update failed: {error}', [
+                'error' => $exception->getMessage(),
+            ]), 500);
         }
     }
 
@@ -83,7 +89,9 @@ class CommentController extends BaseController
             return $this->formatJson(false, null, 'Failed to delete comment', 400);
         } catch (\Throwable $exception) {
             Yii::error($exception->getMessage(), __METHOD__);
-            return $this->formatJson(false, null, 'Delete failed: ' . $exception->getMessage(), 500);
+            return $this->formatJson(false, null, Yii::t('app', 'Delete failed: {error}', [
+                'error' => $exception->getMessage(),
+            ]), 500);
         }
     }
 

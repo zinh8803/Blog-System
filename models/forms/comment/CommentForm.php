@@ -5,6 +5,7 @@ namespace app\models\forms\comment;
 use app\models\Comment;
 use app\models\Post;
 use RuntimeException;
+use Yii;
 
 class CommentForm extends Comment
 {
@@ -27,7 +28,7 @@ class CommentForm extends Comment
             [['post_id', 'content'], 'required'],
             [['post_id', 'parent_id'], 'integer'],
             ['parent_id', 'validateParentComment'],
-            [['content'], 'string', 'min' => 2, 'max' => 100, 'message' => 'Content must be between 2 and 100 characters.'],
+            [['content'], 'string', 'min' => 2, 'max' => 100, 'message' => Yii::t('app', 'Content must be between 2 and 100 characters.')],
             [['status'], 'in', 'range' => ['visible', 'hidden']],
             ['post_id', 'exist', 'targetClass' => Post::class, 'targetAttribute' => 'id'],
             ['parent_id', 'exist', 'targetClass' => Comment::class, 'targetAttribute' => 'id', 'skipOnEmpty' => true],
@@ -43,14 +44,14 @@ class CommentForm extends Comment
         $parent = Comment::findOne($this->$attribute);
 
         if (!$parent) {
-            $this->addError($attribute, 'Parent comment not found.');
+            $this->addError($attribute, Yii::t('app', 'Parent comment not found.'));
             return;
         }
 
         if ($parent->parent_id !== null) {
             $this->addError(
                 $attribute,
-                'Cannot reply to a reply comment.'
+                Yii::t('app', 'Cannot reply to a reply comment.')
             );
         }
     }
@@ -65,7 +66,7 @@ class CommentForm extends Comment
         $comment->setAttributes($this->getAttributes(['post_id', 'parent_id', 'content']), false);
 
         if (!$comment->save(false)) {
-            throw new RuntimeException('Failed to create comment.');
+            throw new RuntimeException(Yii::t('app', 'Failed to create comment.'));
         }
 
         return $comment;
@@ -78,7 +79,7 @@ class CommentForm extends Comment
         }
 
         if (!$this->save(false)) {
-            throw new RuntimeException('Failed to update comment.');
+            throw new RuntimeException(Yii::t('app', 'Failed to update comment.'));
         }
 
         return $this;

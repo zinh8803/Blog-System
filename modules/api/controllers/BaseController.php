@@ -2,6 +2,7 @@
 
 namespace app\modules\api\controllers;
 
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\rest\Controller;
 use yii\web\ForbiddenHttpException;
@@ -19,6 +20,23 @@ class BaseController extends Controller
         ];
     }
 
+    public function beforeAction($action)
+    {
+        $language = Yii::$app->request->headers->get('Accept-Language');
+        $language = strtolower(trim(explode(';', explode(',', (string) $language)[0])[0]));
+        $language = match ($language) {
+            'en', 'en-us' => 'en-US',
+            'vi', 'vi-vn' => 'vi-VN',
+            default => null,
+        };
+
+        if ($language !== null) {
+            Yii::$app->language = $language;
+        }
+
+        return parent::beforeAction($action);
+    }
+
     public function formatJson($status = true, $data = [], string $message = '', $code = 200): array
     {
         \Yii::$app->response->statusCode = $code;
@@ -27,7 +45,7 @@ class BaseController extends Controller
             'code' => $code,
             'status' => $status,
             'data' => $data,
-            'message' => $message,
+            'message' => $message === '' ? '' : Yii::t('app', $message),
         ];
     }
 
@@ -37,7 +55,7 @@ class BaseController extends Controller
             'code' => $statusCode,
             'status' => $status,
             'data' => $dataProvider->getModels(),
-            'message' => $message,
+            'message' => Yii::t('app', $message),
             '_meta' => [
                 'total' => $dataProvider->getTotalCount(),
                 'page' => $dataProvider->pagination->getPage() + 1,
@@ -50,7 +68,7 @@ class BaseController extends Controller
     public function checkPermission($permission, array $param = [])
     {
         if (!\Yii::$app->user->can($permission, $param)) {
-            throw new ForbiddenHttpException('You do not have permission to perform this action');
+            throw new ForbiddenHttpException(Yii::t('app', 'You do not have permission to perform this action'));
         }
     }
 

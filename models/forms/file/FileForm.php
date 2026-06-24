@@ -45,7 +45,9 @@ class FileForm extends Model
         $this->fillFile($model, $url);
 
         if (!$model->save(false)) {
-            throw new RuntimeException('Failed to save file record: ' . implode(', ', $model->getFirstErrors()));
+            throw new RuntimeException(Yii::t('app', 'Failed to save file record: {errors}', [
+                'errors' => implode(', ', $model->getFirstErrors()),
+            ]));
         }
 
         return $model;
@@ -61,7 +63,9 @@ class FileForm extends Model
         $this->fillFile($model, $url);
 
         if (!$model->save(false)) {
-            throw new RuntimeException('Failed to update file record: ' . implode(', ', $model->getFirstErrors()));
+            throw new RuntimeException(Yii::t('app', 'Failed to update file record: {errors}', [
+                'errors' => implode(', ', $model->getFirstErrors()),
+            ]));
         }
 
         return $model;

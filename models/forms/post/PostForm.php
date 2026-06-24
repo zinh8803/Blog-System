@@ -5,6 +5,7 @@ namespace app\models\forms\post;
 use app\models\Category;
 use app\models\File;
 use app\models\Post;
+use Yii;
 use yii\web\UploadedFile;
 
 class PostForm extends Post
@@ -50,9 +51,9 @@ class PostForm extends Post
             [['content'], 'string', 'min' => 10, 'max' => 10000],
             ['status', 'in', 'range' => [Post::STATUS_DRAFT, Post::STATUS_PUBLISHED]],
             ['tags', 'default', 'value' => []],
-            [['title'], 'unique', 'targetClass' => Post::class, 'on' => self::SCENARIO_CREATE, 'message' => 'title already exists.',],
+            [['title'], 'unique', 'targetClass' => Post::class, 'on' => self::SCENARIO_CREATE, 'message' => Yii::t('app', 'Title already exists.'),],
             [['title'], 'unique', 'targetClass' => Post::class, 'filter' => ['!=', 'id', $this->id],
-                'on' => self::SCENARIO_UPDATE, 'message' => 'title already exists.'],
+                'on' => self::SCENARIO_UPDATE, 'message' => Yii::t('app', 'Title already exists.')],
             ['tags', 'each', 'rule' => ['string', 'max' => 50]],
             [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => ['png', 'jpeg', 'webp'], 'checkExtensionByMimeType' => false, 'maxSize' => 5 * 1024 * 1024,],
         ]);

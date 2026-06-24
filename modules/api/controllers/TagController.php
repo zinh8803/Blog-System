@@ -31,7 +31,7 @@ class TagController extends BaseController
     {
         try {
             $params = $this->request->queryParams;
-            $cacheKey = [self::class, 'index', $params];
+            $cacheKey = [self::class, 'index', Yii::$app->language, $params];
 
             $response = Yii::$app->cache->getOrSet($cacheKey, function () use ($params) {
                 $searchModel = new TagSearch();
@@ -51,7 +51,7 @@ class TagController extends BaseController
     public function actionView($id)
     {
         try {
-            $cacheKey = [self::class, 'view', $id];
+            $cacheKey = [self::class, 'view', Yii::$app->language, $id];
             $data = Yii::$app->cache->getOrSet($cacheKey, function () use ($id) {
                 return $this->findModel($id)->toArray();
             }, self::CACHE_DURATION, new TagDependency(['tags' => self::CACHE_TAG]));
@@ -77,7 +77,7 @@ class TagController extends BaseController
 
             $this->invalidateTagCache();
 
-            return $this->formatJson(true, $model, 'Category created successfully', 201);
+            return $this->formatJson(true, $model, 'Tag created successfully', 201);
         } catch (\Throwable $exception) {
             Yii::error($exception->getMessage(), __METHOD__);
             throw new NotFoundHttpException($exception->getMessage());

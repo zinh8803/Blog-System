@@ -4,6 +4,7 @@ namespace app\models\forms\tag;
 
 use app\models\Tag;
 use RuntimeException;
+use Yii;
 
 class TagForm extends Tag
 {
@@ -21,10 +22,10 @@ class TagForm extends Tag
     public function rules(): array
     {
         return array_merge(parent::rules(), [
-            [['name'], 'unique', 'targetClass' => Tag::class, 'on' => self::SCENARIO_CREATE, 'message' => 'Name already exists.',],
+            [['name'], 'unique', 'targetClass' => Tag::class, 'on' => self::SCENARIO_CREATE, 'message' => Yii::t('app', 'Name already exists.'),],
 
             [['name'], 'unique', 'targetClass' => Tag::class, 'filter' => ['!=', 'id', $this->id],
-                'on' => self::SCENARIO_UPDATE, 'message' => 'Name already exists.'],
+                'on' => self::SCENARIO_UPDATE, 'message' => Yii::t('app', 'Name already exists.')],
         ]);
     }
 
@@ -38,7 +39,7 @@ class TagForm extends Tag
         $model->setAttributes($this->getAttributes(['name', 'slug']), false);
 
         if (!$model->save(false)) {
-            throw new RuntimeException('Failed to create tag.');
+            throw new RuntimeException(Yii::t('app', 'Failed to create tag.'));
         }
 
         return $model;
@@ -51,7 +52,7 @@ class TagForm extends Tag
         }
 
         if (!$this->save(false)) {
-            throw new RuntimeException('Failed to update tag.');
+            throw new RuntimeException(Yii::t('app', 'Failed to update tag.'));
         }
 
         return $this;
