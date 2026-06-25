@@ -133,7 +133,8 @@ $config = [
                         'api/comment',
                         'api/tag',
                         'api/file',
-                        'api/ai-log'
+                        'api/ai-log',
+                        'api/post-stat',
                     ],
                     'pluralize' => false,
                 ],
