@@ -11,6 +11,10 @@ defined('YII_DEBUG') or define('YII_DEBUG', true);
 defined('YII_ENV') or define('YII_ENV', 'test');
 
 require __DIR__ . '/../vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->safeLoad();
+
 require __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';
 
 $c3 = dirname(__DIR__) . '/c3.php';

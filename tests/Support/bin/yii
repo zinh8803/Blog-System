@@ -8,17 +8,23 @@
  * @license https://www.yiiframework.com/license/
  */
 
+$root = dirname(__DIR__, 3);
+
 defined('YII_DEBUG') or define('YII_DEBUG', true);
 defined('YII_ENV') or define('YII_ENV', 'test');
 
-require __DIR__ . '/../../vendor/autoload.php';
-require __DIR__ . '/../../vendor/yiisoft/yii2/Yii.php';
+require $root . '/vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable($root);
+$dotenv->safeLoad();
+
+require $root . '/vendor/yiisoft/yii2/Yii.php';
 
 $config = yii\helpers\ArrayHelper::merge(
-    require __DIR__ . '/../../config/console.php',
+    require $root . '/config/console.php',
     [
         'components' => [
-            'db' => require __DIR__ . '/../../config/test_db.php'
+            'db' => require $root . '/config/test_db.php'
         ]
     ]
 );
