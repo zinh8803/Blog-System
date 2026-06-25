@@ -8,6 +8,8 @@ paths:
   data: tests/Support/data
   support: tests/Support
   envs: tests/Support/envs
+params:
+  - .env
 actor_suffix: Tester
 settings:
   memory_limit: 1024M

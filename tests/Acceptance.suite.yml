@@ -8,17 +8,19 @@ actor: AcceptanceTester
 modules:
   enabled:
     - PhpBrowser:
-        url: http://localhost
+        url: '%APP_URL%'
+    - REST:
+        depends: PhpBrowser
     - Yii2:
         part: orm
         entryScript: index-test.php
         cleanup: false
 step_decorators: ~
 
-# webdriver configuration example
-# actor: AcceptanceTester
-# modules:
+  # webdriver configuration example
+  # actor: AcceptanceTester
+  # modules:
   #enabled:
-    # - WebDriver:
-    #   url: http://127.0.0.1:8080/
-    #   browser: firefox
+  # - WebDriver:
+  #   url: http://127.0.0.1:8080/
+#   browser: firefox
