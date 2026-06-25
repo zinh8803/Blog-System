@@ -14,5 +14,8 @@ $config['components']['mailer'] = [
 ];
 
 $config['components']['request']['enableCsrfValidation'] = false;
+$config['components']['session'] = [
+    'savePath' => __DIR__ . '/../runtime/test-sessions',
+];
 
 return $config;

@@ -10,3 +10,8 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->safeLoad();
+
+$sessionPath = dirname(__DIR__) . '/runtime/test-sessions';
+if (!is_dir($sessionPath)) {
+    mkdir($sessionPath, 0777, true);
+}

@@ -11,7 +11,9 @@ actor: FunctionalTester
 modules:
   enabled:
     - Filesystem
-    - Yii2
+    - Yii2:
+        cleanup: true
+        transaction: false
     - Asserts
     - REST:
         depends: Yii2
