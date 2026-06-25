@@ -20,6 +20,21 @@ $config = [
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
         ],
+        'mail' => [
+            'class' => \app\components\MailComponent::class,
+        ],
+        'mailer' => [
+            'class' => \yii\symfonymailer\Mailer::class,
+            'viewPath' => '@app/mail',
+            'transport' => [
+                'scheme' => 'smtp',
+                'host' => $_ENV['MAIL_HOST'] ?? '',
+                'username' => $_ENV['MAIL_USERNAME'] ?? '',
+                'password' => $_ENV['MAIL_PASSWORD'] ?? '',
+                'port' => (int) ($_ENV['MAIL_PORT'] ?? 587),
+                'encryption' => $_ENV['MAIL_ENCRYPTION'] ?? 'tls',
+            ],
+        ],
         'log' => [
             'targets' => [
                 [

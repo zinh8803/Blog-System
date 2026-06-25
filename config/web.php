@@ -89,7 +89,21 @@ $config = [
         'errorHandler' => [
             'class' => app\components\ApiErrorHandler::class,
         ],
-        'mailer' => \yii\mail\MailerInterface::class,
+        'mail' => [
+            'class' => \app\components\MailComponent::class,
+        ],
+        'mailer' => [
+            'class' => \yii\symfonymailer\Mailer::class,
+            'viewPath' => '@app/mail',
+            'transport' => [
+                'scheme' => 'smtp',
+                'host' => $_ENV['MAIL_HOST'],
+                'username' => $_ENV['MAIL_USERNAME'],
+                'password' => $_ENV['MAIL_PASSWORD'],
+                'port' => (int) $_ENV['MAIL_PORT'],
+                'encryption' => $_ENV['MAIL_ENCRYPTION'],
+            ],
+        ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
