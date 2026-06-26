@@ -2,26 +2,26 @@
 
 namespace app\modules\api\controllers;
 
+use app\models\forms\otp_mail\OtpMailForm;
 use Yii;
 
 class MailController extends BaseController
 {
-    public function actionTestMail()
+    public function actionSendRegisterMail()
     {
-        try {
-            $sent = Yii::$app->mail->sendVerifyEmail(
-                'ngoquocvinh2003@gmail.com',
-                'vinh',
-                '123456'
-            );
+        $form = new OtpMailForm();
+        $form->load($this->request->bodyParams, '');
 
-            return $this->formatJson(true, [
-                'sent' => $sent,
-            ], 'Mail sent successfully');
+        try {
+            if (!$form->sendRegisterOtp()) {
+                return $this->formatJson(false, $form->getErrors(), 'Validation failed', 422);
+            }
+
+            return $this->formatJson(true, [], 'Mail sent successfully');
         } catch (\Throwable $e) {
-            return $this->formatJson(false, [
-                'error' => $e->getMessage(),
-            ], 'Failed to send mail', 500);
+            Yii::error($e->getMessage(), __METHOD__);
+
+            return $this->formatJson(false, null, Yii::t('app', 'Failed to send mail: {error}', ['error' => $e->getMessage(),]), 500);
         }
     }
 }

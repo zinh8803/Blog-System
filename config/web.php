@@ -163,6 +163,9 @@ $config = [
                 'POST api/ai/generate-title' => 'api/ai/generate-title',
                 'POST api/ai/generate-summary' => 'api/ai/generate-summary',
                 'POST api/ai/rewrite' => 'api/ai/rewrite',
+
+                //mail
+                'POST api/mail/send-register-mail' => 'api/mail/send-register-mail',
             ],
         ],
     ],
