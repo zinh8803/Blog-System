@@ -6,7 +6,7 @@ $db = require __DIR__ . '/db.php';
 $config = [
     'id' => 'basic-console',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => ['log', 'queue'],
     'controllerNamespace' => 'app\commands',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
@@ -23,6 +23,15 @@ $config = [
         'mail' => [
             'class' => \app\components\MailComponent::class,
         ],
+        'redis' => [
+            'class' => yii\redis\Connection::class,
+            'hostname' => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
+            'port' => $_ENV['REDIS_PORT'] ?? 6379,
+            'database' => $_ENV['REDIS_DATABASE'] ?? 0,
+            'password' => !empty($_ENV['REDIS_PASSWORD'])
+                ? $_ENV['REDIS_PASSWORD']
+                : null,
+        ],
         'mailer' => [
             'class' => \yii\symfonymailer\Mailer::class,
             'viewPath' => '@app/mail',
@@ -34,6 +43,12 @@ $config = [
                 'port' => (int) ($_ENV['MAIL_PORT'] ?? 587),
                 'encryption' => $_ENV['MAIL_ENCRYPTION'] ?? 'tls',
             ],
+        ],
+        'queue' => [
+            'class' => yii\queue\redis\Queue::class,
+            'redis' => 'redis',
+            'channel' => 'queue',
+            'as log' => yii\queue\LogBehavior::class,
         ],
         'log' => [
             'targets' => [

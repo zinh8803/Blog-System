@@ -82,6 +82,12 @@ $config = [
                 ],
             ],
         ],
+        'queue' => [
+            'class' => yii\queue\redis\Queue::class,
+            'redis' => 'redis',
+            'channel' => 'queue',
+            'as log' => yii\queue\LogBehavior::class,
+        ],
         'user' => [
             'identityClass' => \app\models\User::class,
             'enableAutoLogin' => true,
