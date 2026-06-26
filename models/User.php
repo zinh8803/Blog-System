@@ -148,4 +148,9 @@ class User extends BaseUser implements IdentityInterface
             Yii::$app->authManager->getRolesByUser($this->id)
         );
     }
+
+    public function getOtpMail()
+    {
+        return $this->hasOne(OtpMail::class, ['user_id' => 'id']);
+    }
 }
