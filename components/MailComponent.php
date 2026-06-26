@@ -19,7 +19,7 @@ class MailComponent extends Component
                 'otp' => $otp,
             ])
             ->setFrom([
-                $_ENV['MAIL_USERNAME'] ?? 'noreply@example.com' => 'Blog System',
+                    getenv('MAIL_USERNAME') ?? 'noreply@example.com' => 'Blog System',
             ])
             ->setTo($email)
             ->setSubject('Email Verification')

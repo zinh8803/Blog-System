@@ -25,11 +25,11 @@ $config = [
         ],
         'redis' => [
             'class' => yii\redis\Connection::class,
-            'hostname' => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
-            'port' => $_ENV['REDIS_PORT'] ?? 6379,
-            'database' => $_ENV['REDIS_DATABASE'] ?? 0,
-            'password' => !empty($_ENV['REDIS_PASSWORD'])
-                ? $_ENV['REDIS_PASSWORD']
+            'hostname' => getenv('REDIS_HOST') ?? '127.0.0.1',
+            'port' => getenv('REDIS_PORT') ?? 6379,
+            'database' => getenv('REDIS_DATABASE') ?? 0,
+            'password' => !empty(getenv('REDIS_PASSWORD'))
+                ? getenv('REDIS_PASSWORD')
                 : null,
         ],
         'mailer' => [
@@ -37,11 +37,11 @@ $config = [
             'viewPath' => '@app/mail',
             'transport' => [
                 'scheme' => 'smtp',
-                'host' => $_ENV['MAIL_HOST'] ?? '',
-                'username' => $_ENV['MAIL_USERNAME'] ?? '',
-                'password' => $_ENV['MAIL_PASSWORD'] ?? '',
-                'port' => (int) ($_ENV['MAIL_PORT'] ?? 587),
-                'encryption' => $_ENV['MAIL_ENCRYPTION'] ?? 'tls',
+                'host' => getenv('MAIL_HOST') ?? '',
+                'username' => getenv('MAIL_USERNAME') ?? '',
+                'password' => getenv('MAIL_PASSWORD') ?? '',
+                'port' => (int) (getenv('MAIL_PORT') ?? 587),
+                'encryption' => getenv('MAIL_ENCRYPTION') ?? 'tls',
             ],
         ],
         'queue' => [

@@ -2,7 +2,7 @@
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
-$cacheConfig = match ($_ENV['CACHE_DRIVER'] ?? 'file') {
+$cacheConfig = match (getenv('CACHE_DRIVER') ?? 'file') {
     'redis' => [
         'class' => yii\redis\Cache::class,
         'redis' => 'redis',
@@ -40,24 +40,24 @@ $config = [
     ],
     'components' => [
         'request' => [
-            'cookieValidationKey' => $_ENV['COOKIE_VALIDATION_KEY'] ?? '',
+            'cookieValidationKey' => getenv('COOKIE_VALIDATION_KEY') ?? '',
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
             ],
         ],
         'r2' => [
             'class' => \app\components\R2Component::class,
-            'account' => $_ENV['R2_ACCOUNT_ID'] ?? '',
-            'key' => $_ENV['R2_ACCESS_KEY_ID'] ?? '',
-            'secret' => $_ENV['R2_SECRET_ACCESS_KEY'] ?? '',
-            'bucket' => $_ENV['R2_BUCKET'] ?? '',
-            'public_url' => $_ENV['R2_PUBLIC_URL'] ?? '',
+            'account' => getenv('R2_ACCOUNT_ID') ?? '',
+            'key' => getenv('R2_ACCESS_KEY_ID') ?? '',
+            'secret' => getenv('R2_SECRET_ACCESS_KEY') ?? '',
+            'bucket' => getenv('R2_BUCKET') ?? '',
+            'public_url' => getenv('R2_PUBLIC_URL') ?? '',
         ],
         'Ai' => [
             'class' => \app\components\AiWorkerComponent::class,
-            'accountId' => $_ENV['CF_ACCOUNT_ID'],
-            'apiToken' => $_ENV['CF_API_TOKEN'],
-            'model' => $_ENV['CF_AI_MODEL'],
+            'accountId' => getenv('CF_ACCOUNT_ID'),
+            'apiToken' => getenv('CF_API_TOKEN'),
+            'model' => getenv('CF_AI_MODEL'),
         ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
@@ -66,11 +66,11 @@ $config = [
 
         'redis' => [
             'class' => yii\redis\Connection::class,
-            'hostname' => $_ENV['REDIS_HOST'] ?? '127.0.0.1',
-            'port' => $_ENV['REDIS_PORT'] ?? 6379,
-            'database' => $_ENV['REDIS_DATABASE'] ?? 0,
-            'password' => !empty($_ENV['REDIS_PASSWORD'])
-                ? $_ENV['REDIS_PASSWORD']
+            'hostname' => getenv('REDIS_HOST') ?? '127.0.0.1',
+            'port' => getenv('REDIS_PORT') ?? 6379,
+            'database' => getenv('REDIS_DATABASE') ?? 0,
+            'password' => !empty(getenv('REDIS_PASSWORD'))
+                ? getenv('REDIS_PASSWORD')
                 : null,
         ],
         'i18n' => [
@@ -103,11 +103,11 @@ $config = [
             'viewPath' => '@app/mail',
             'transport' => [
                 'scheme' => 'smtp',
-                'host' => $_ENV['MAIL_HOST'],
-                'username' => $_ENV['MAIL_USERNAME'],
-                'password' => $_ENV['MAIL_PASSWORD'],
-                'port' => (int) $_ENV['MAIL_PORT'],
-                'encryption' => $_ENV['MAIL_ENCRYPTION'],
+                'host' => getenv('MAIL_HOST'),
+                'username' => getenv('MAIL_USERNAME'),
+                'password' => getenv('MAIL_PASSWORD'),
+                'port' => (int) getenv('MAIL_PORT'),
+                'encryption' => getenv('MAIL_ENCRYPTION'),
             ],
         ],
         'log' => [
