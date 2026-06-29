@@ -21,7 +21,7 @@ class MailController extends BaseController
         } catch (\Throwable $e) {
             Yii::error($e->getMessage(), __METHOD__);
 
-            return $this->formatJson(false, null, Yii::t('app', 'Failed to send mail: {error}', ['error' => $e->getMessage(),]), 500);
+            return $this->formatJson(false, null, 'Failed to send mail: {error}', ['error' => $e->getMessage()], 500);
         }
     }
 }
